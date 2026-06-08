@@ -3,7 +3,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.course-card {
+.classroom-card {
   background: white;
   border-radius: 10px;
   overflow: hidden;
@@ -14,55 +14,60 @@
     box-shadow 0.3s;
 }
 
-.course-card:hover {
+.classroom-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 }
 
-.course-image {
-  height: 180px;
-  object-fit: cover;
-  width: 100%;
-}
-
-.course-body {
+.classroom-header {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
   padding: 20px;
+  position: relative;
 }
 
-.course-title {
+.classroom-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.classroom-title {
   font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
-.course-instructor {
-  color: #666;
-  font-size: 0.85rem;
-  margin-bottom: 10px;
-}
-
-.course-stats {
+.classroom-stats {
   display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-top: 1px solid #dee2e6;
+  justify-content: space-around;
+  padding: 15px;
+  background: #f8f9fa;
   border-bottom: 1px solid #dee2e6;
-  margin: 10px 0;
 }
 
-.stat {
+.stat-item {
   text-align: center;
 }
 
-.stat-value {
-  font-weight: bold;
-  color: #007bff;
-}
-
-.course-price {
-  font-size: 1.3rem;
+.stat-number {
+  font-size: 1.2rem;
   font-weight: bold;
   color: #28a745;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.classroom-body {
+  padding: 15px;
+}
+
+.classroom-actions {
+  padding: 15px;
+  border-top: 1px solid #dee2e6;
+  background: #f8f9fa;
 }
 
 .filter-section {
@@ -74,7 +79,7 @@
 }
 
 .modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
 }
 
@@ -113,8 +118,18 @@
   }
 }
 
-.course-card {
+.classroom-card {
   animation: fadeIn 0.5s ease;
+}
+
+.badge-status {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
 }
 
 .search-box {
@@ -148,34 +163,15 @@
   height: 3rem;
 }
 
-.rating-stars {
-  color: #ffc107;
-  font-size: 0.85rem;
+.quick-stats {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
 }
 
-.badge-level {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 5px;
-  justify-content: flex-end;
-}
-
-.curriculum-item {
-  background: #f8f9fa;
-  padding: 8px 12px;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.add-lesson-btn {
-  margin-top: 10px;
-  width: 100%;
+.quick-stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
 }

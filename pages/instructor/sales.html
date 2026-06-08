@@ -3,9 +3,918 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instructor | Sales</title>
+    <title>Instructor | Sales Analytics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .stat-trend {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .trend-up {
+            color: #28a745;
+        }
+        
+        .trend-down {
+            color: #dc3545;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            padding-left: 10px;
+        }
+        
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .transaction-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .transaction-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .transaction-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        .payout-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .payout-amount {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .date-range-selector {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stat-card, .chart-card {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .commission-badge {
+            background: #ffc107;
+            color: #333;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .table-responsive {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .earning-breakdown {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">📚 EduLink Instructor</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-courses.html"><i class="fas fa-book"></i> My Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="classrooms.html"><i class="fas fa-chalkboard"></i> Classrooms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="sales.html"><i class="fas fa-dollar-sign"></i> Sales</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="my-courses.html">
+                                <i class="fas fa-book-open"></i> My Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="classrooms.html">
+                                <i class="fas fa-chalkboard"></i> My Classrooms
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="analytics.html">
+                                <i class="fas fa-chart-line"></i> Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="sales.html">
+                                <i class="fas fa-chart-bar"></i> Sales Reports
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Commission Info -->
+                    <div class="mt-4 p-3">
+                        <div class="alert alert-success">
+                            <i class="fas fa-percent"></i>
+                            <strong>Commission Rate</strong>
+                            <hr>
+                            <div class="text-center">
+                                <div class="display-6">70%</div>
+                                <small>You earn 70% of each sale</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-dollar-sign"></i> Sales & Earnings
+                    </h1>
+                    <div id="instructorWelcome" class="text-muted"></div>
+                </div>
+
+                <!-- Payout Summary Card -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="payout-card">
+                            <i class="fas fa-wallet fa-2x mb-2"></i>
+                            <h5>Available for Payout</h5>
+                            <div class="payout-amount" id="availablePayout">$0</div>
+                            <button class="btn btn-light mt-3" onclick="requestPayout()">
+                                <i class="fas fa-money-bill-wave"></i> Request Payout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <label class="form-label">Date Range</label>
+                            <select id="dateRange" class="form-select" onchange="updateSalesData()">
+                                <option value="7">Last 7 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                                <option value="365">Last year</option>
+                                <option value="all">All time</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-2 mb-md-0">
+                            <label class="form-label">Course Filter</label>
+                            <select id="courseFilter" class="form-select" onchange="updateSalesData()">
+                                <option value="all">All Courses</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-success w-100" onclick="exportSalesReport()">
+                                <i class="fas fa-download"></i> Export Report
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line" style="color: #28a745;"></i>
+                            </div>
+                            <div class="stat-value" id="totalEarnings">$0</div>
+                            <div class="stat-label">Total Earnings</div>
+                            <div class="stat-trend">
+                                <span id="earningsTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +12%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-cart" style="color: #17a2b8;"></i>
+                            </div>
+                            <div class="stat-value" id="totalSales">0</div>
+                            <div class="stat-label">Total Sales</div>
+                            <div class="stat-trend">
+                                <span id="salesTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +8%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users" style="color: #ffc107;"></i>
+                            </div>
+                            <div class="stat-value" id="totalStudents">0</div>
+                            <div class="stat-label">Total Students</div>
+                            <div class="stat-trend">
+                                <span id="studentsTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +15%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line" style="color: #dc3545;"></i>
+                            </div>
+                            <div class="stat-value" id="avgSaleValue">$0</div>
+                            <div class="stat-label">Average Sale Value</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-line"></i> Earnings Trend
+                                <button class="btn btn-sm btn-outline-secondary float-end" onclick="exportChart()">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                            <canvas id="earningsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-pie"></i> Earnings by Course
+                            </div>
+                            <canvas id="courseEarningsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Selling Courses -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-trophy"></i> Top Performing Courses
+                        <button class="btn btn-sm btn-outline-secondary float-end" onclick="exportTopCourses()">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Course Name</th>
+                                    <th>Students</th>
+                                    <th>Total Sales</th>
+                                    <th>Your Earnings</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topCoursesBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-list"></i> Recent Transactions
+                        <button class="btn btn-sm btn-outline-secondary float-end" onclick="exportTransactions()">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Amount</th>
+                                    <th>Your Commission</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="transactionPagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script>
+        let currentUser = null;
+        let earningsChart, courseEarningsChart;
+        let myCourses = [];
+        let allTransactions = [];
+        let filteredTransactions = [];
+        let currentPage = 1;
+        let itemsPerPage = 10;
+        const COMMISSION_RATE = 0.70; // 70% commission
+
+        // Check authentication
+        function checkAuth() {
+            const user = localStorage.getItem('currentUser');
+            if (!user) {
+                window.location.href = '../../login.html';
+                return null;
+            }
+            currentUser = JSON.parse(user);
+            if (currentUser.role !== 'instructor') {
+                window.location.href = `../../pages/${currentUser.role}/dashboard.html`;
+                return null;
+            }
+            return currentUser;
+        }
+
+        // Load data
+        async function loadSalesData() {
+            try {
+                // Load courses
+                const coursesResponse = await fetch('../../assets/data/courses.json');
+                const coursesData = await coursesResponse.json();
+                myCourses = coursesData.courses.filter(c => c.instructorId === currentUser.id);
+                
+                // Populate course filter
+                populateCourseFilter();
+                
+                // Generate transactions for instructor's courses
+                generateTransactions();
+                
+                updateSalesData();
+            } catch (error) {
+                console.error('Error loading sales data:', error);
+                showToast('Error', 'Failed to load sales data', 'danger');
+            }
+        }
+
+        // Populate course filter dropdown
+        function populateCourseFilter() {
+            let options = '<option value="all">All Courses</option>';
+            myCourses.forEach(course => {
+                options += `<option value="${course.id}">${course.title}</option>`;
+            });
+            $('#courseFilter').html(options);
+        }
+
+        // Generate transactions
+        function generateTransactions() {
+            const savedTransactions = localStorage.getItem(`instructor_transactions_${currentUser.id}`);
+            if (savedTransactions) {
+                allTransactions = JSON.parse(savedTransactions);
+            } else {
+                allTransactions = [];
+                const students = ['John Doe', 'Jane Smith', 'Mike Johnson', 'Sarah Williams', 'David Brown'];
+                const statuses = ['completed', 'completed', 'completed', 'pending', 'completed'];
+                
+                myCourses.forEach(course => {
+                    const numSales = Math.floor(Math.random() * 50) + 10;
+                    for (let i = 0; i < numSales; i++) {
+                        const date = new Date();
+                        date.setDate(date.getDate() - Math.floor(Math.random() * 90));
+                        const status = statuses[Math.floor(Math.random() * statuses.length)];
+                        const student = students[Math.floor(Math.random() * students.length)];
+                        
+                        allTransactions.push({
+                            id: `TXN${String(allTransactions.length + 1).padStart(6, '0')}`,
+                            date: date.toISOString(),
+                            student: student,
+                            studentEmail: `${student.toLowerCase().replace(' ', '.')}@example.com`,
+                            courseId: course.id,
+                            courseTitle: course.title,
+                            amount: course.price,
+                            commission: course.price * COMMISSION_RATE,
+                            status: status
+                        });
+                    }
+                });
+                
+                allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+                saveTransactions();
+            }
+        }
+
+        // Save transactions
+        function saveTransactions() {
+            localStorage.setItem(`instructor_transactions_${currentUser.id}`, JSON.stringify(allTransactions));
+        }
+
+        // Update sales data based on filters
+        function updateSalesData() {
+            const days = $('#dateRange').val();
+            const courseId = $('#courseFilter').val();
+            
+            let filtered = [...allTransactions];
+            
+            // Filter by date range
+            if (days !== 'all') {
+                const cutoffDate = new Date();
+                cutoffDate.setDate(cutoffDate.getDate() - parseInt(days));
+                filtered = filtered.filter(t => new Date(t.date) >= cutoffDate);
+            }
+            
+            // Filter by course
+            if (courseId !== 'all') {
+                filtered = filtered.filter(t => t.courseId === parseInt(courseId));
+            }
+            
+            filteredTransactions = filtered;
+            calculateStats();
+            updateCharts();
+            updateTopCourses();
+            renderTransactions();
+        }
+
+        // Calculate statistics
+        function calculateStats() {
+            const completedTransactions = filteredTransactions.filter(t => t.status === 'completed');
+            const totalEarnings = completedTransactions.reduce((sum, t) => sum + t.commission, 0);
+            const totalSales = completedTransactions.length;
+            const totalStudents = [...new Set(completedTransactions.map(t => t.student))].length;
+            const avgSaleValue = totalSales > 0 ? totalEarnings / totalSales : 0;
+            
+            // Calculate available payout (completed transactions not yet paid out)
+            const paidOut = localStorage.getItem(`payout_amount_${currentUser.id}`) || 0;
+            const availablePayout = totalEarnings - paidOut;
+            
+            $('#totalEarnings').text('$' + totalEarnings.toLocaleString());
+            $('#totalSales').text(totalSales.toLocaleString());
+            $('#totalStudents').text(totalStudents);
+            $('#avgSaleValue').text('$' + avgSaleValue.toFixed(2));
+            $('#availablePayout').text('$' + availablePayout.toLocaleString());
+            
+            // Update trends (simulated)
+            $('#earningsTrend').html('<i class="fas fa-arrow-up"></i> +' + (Math.random() * 15 + 5).toFixed(0) + '%');
+            $('#salesTrend').html('<i class="fas fa-arrow-up"></i> +' + (Math.random() * 12 + 3).toFixed(0) + '%');
+            $('#studentsTrend').html('<i class="fas fa-arrow-up"></i> +' + (Math.random() * 18 + 5).toFixed(0) + '%');
+        }
+
+        // Update charts
+        function updateCharts() {
+            // Earnings trend data
+            const trendData = generateTrendData();
+            
+            if (earningsChart) earningsChart.destroy();
+            earningsChart = new Chart(document.getElementById('earningsChart'), {
+                type: 'line',
+                data: {
+                    labels: trendData.labels,
+                    datasets: [{
+                        label: 'Earnings ($)',
+                        data: trendData.values,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' }
+                    }
+                }
+            });
+            
+            // Course earnings distribution
+            const courseData = generateCourseEarningsData();
+            if (courseEarningsChart) courseEarningsChart.destroy();
+            courseEarningsChart = new Chart(document.getElementById('courseEarningsChart'), {
+                type: 'pie',
+                data: {
+                    labels: courseData.labels,
+                    datasets: [{
+                        data: courseData.values,
+                        backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#dc3545', '#6610f2', '#fd7e14']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Generate trend data
+        function generateTrendData() {
+            const monthlyEarnings = {};
+            const completedTransactions = filteredTransactions.filter(t => t.status === 'completed');
+            
+            completedTransactions.forEach(t => {
+                const month = new Date(t.date).toLocaleString('default', { month: 'short' });
+                monthlyEarnings[month] = (monthlyEarnings[month] || 0) + t.commission;
+            });
+            
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const labels = months.filter(m => monthlyEarnings[m]);
+            const values = labels.map(l => monthlyEarnings[l]);
+            
+            return { labels, values };
+        }
+
+        // Generate course earnings data
+        function generateCourseEarningsData() {
+            const courseEarnings = {};
+            const completedTransactions = filteredTransactions.filter(t => t.status === 'completed');
+            
+            completedTransactions.forEach(t => {
+                courseEarnings[t.courseTitle] = (courseEarnings[t.courseTitle] || 0) + t.commission;
+            });
+            
+            const sorted = Object.entries(courseEarnings).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            return {
+                labels: sorted.map(s => s[0]),
+                values: sorted.map(s => s[1])
+            };
+        }
+
+        // Update top courses table
+        function updateTopCourses() {
+            const courseSales = {};
+            const completedTransactions = filteredTransactions.filter(t => t.status === 'completed');
+            
+            completedTransactions.forEach(t => {
+                if (!courseSales[t.courseId]) {
+                    const course = myCourses.find(c => c.id === t.courseId);
+                    courseSales[t.courseId] = {
+                        title: t.courseTitle,
+                        students: 0,
+                        sales: 0,
+                        earnings: 0
+                    };
+                }
+                courseSales[t.courseId].students++;
+                courseSales[t.courseId].sales += t.amount;
+                courseSales[t.courseId].earnings += t.commission;
+            });
+            
+            const topCourses = Object.values(courseSales).sort((a, b) => b.earnings - a.earnings).slice(0, 5);
+            
+            let html = '';
+            topCourses.forEach((course, index) => {
+                const performance = topCourses.length > 0 ? (course.earnings / topCourses[0].earnings) * 100 : 0;
+                
+                html += `
+                    <tr>
+                        <td><span class="badge bg-${index < 3 ? 'warning' : 'secondary'}">${index + 1}</span></td>
+                        <td>${course.title}</td>
+                        <td>${course.students}</td>
+                        <td>$${course.sales.toLocaleString()}</td>
+                        <td><strong>$${course.earnings.toLocaleString()}</strong></td>
+                        <td>
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bg-success" style="width: ${performance}%"></div>
+                            </div>
+                            <small>${performance.toFixed(0)}%</small>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            $('#topCoursesBody').html(html);
+        }
+
+        // Render transactions
+        function renderTransactions() {
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageTransactions = filteredTransactions.slice(start, end);
+            
+            if (pageTransactions.length === 0) {
+                $('#transactionsBody').html('<tr><td colspan="7" class="text-center">No transactions found</td></tr>');
+                $('#transactionPagination').html('');
+                return;
+            }
+            
+            let html = '';
+            pageTransactions.forEach(transaction => {
+                const statusClass = transaction.status === 'completed' ? 'status-completed' : 'status-pending';
+                
+                html += `
+                    <tr>
+                        <td><code>${transaction.id}</code></td>
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.student}</td>
+                        <td>${transaction.courseTitle}</td>
+                        <td>$${transaction.amount.toFixed(2)}</td>
+                        <td><strong>$${transaction.commission.toFixed(2)}</strong></td>
+                        <td><span class="transaction-status ${statusClass}">${transaction.status}</span></td>
+                    </tr>
+                `;
+            });
+            
+            $('#transactionsBody').html(html);
+            renderPagination();
+        }
+
+        // Render pagination
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+            if (totalPages <= 1) {
+                $('#transactionPagination').html('');
+                return;
+            }
+            
+            let html = '';
+            html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">Previous</a>
+                    </li>`;
+            
+            for (let i = 1; i <= Math.min(totalPages, 5); i++) {
+                html += `<li class="page-item ${currentPage === i ? 'active' : ''}">
+                            <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                         </li>`;
+            }
+            
+            if (totalPages > 5) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${totalPages})">${totalPages}</a></li>`;
+            }
+            
+            html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">Next</a>
+                    </li>`;
+            
+            $('#transactionPagination').html(html);
+        }
+
+        // Change page
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredTransactions.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTransactions();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Request payout
+        function requestPayout() {
+            const completedTransactions = filteredTransactions.filter(t => t.status === 'completed');
+            const totalEarnings = completedTransactions.reduce((sum, t) => sum + t.commission, 0);
+            const paidOut = parseFloat(localStorage.getItem(`payout_amount_${currentUser.id}`) || 0);
+            const available = totalEarnings - paidOut;
+            
+            if (available <= 0) {
+                showToast('No Funds', 'No funds available for payout', 'warning');
+                return;
+            }
+            
+            if (confirm(`Request payout of $${available.toLocaleString()}?`)) {
+                localStorage.setItem(`payout_amount_${currentUser.id}`, totalEarnings);
+                showToast('Payout Requested', `Payout of $${available.toLocaleString()} has been requested!`, 'success');
+                calculateStats();
+            }
+        }
+
+        // Export sales report
+        function exportSalesReport() {
+            const report = {
+                instructor: currentUser.name,
+                generatedDate: new Date().toISOString(),
+                totalEarnings: $('#totalEarnings').text(),
+                totalSales: $('#totalSales').text(),
+                totalStudents: $('#totalStudents').text(),
+                transactions: filteredTransactions
+            };
+            
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', `sales_report_${new Date().toISOString().split('T')[0]}.json`);
+            linkElement.click();
+            
+            showToast('Success', 'Sales report exported!', 'success');
+        }
+
+        // Export top courses to CSV
+        function exportTopCourses() {
+            let csv = 'Rank,Course Name,Students,Total Sales,Your Earnings\n';
+            $('#topCoursesBody tr').each(function() {
+                const row = $(this);
+                csv += row.find('td:eq(0)').text() + ',';
+                csv += '"' + row.find('td:eq(1)').text() + '",';
+                csv += row.find('td:eq(2)').text() + ',';
+                csv += row.find('td:eq(3)').text() + ',';
+                csv += row.find('td:eq(4)').text() + '\n';
+            });
+            
+            downloadCSV(csv, 'top_courses.csv');
+        }
+
+        // Export transactions to CSV
+        function exportTransactions() {
+            let csv = 'Transaction ID,Date,Student,Course,Amount,Commission,Status\n';
+            filteredTransactions.forEach(t => {
+                csv += `${t.id},${new Date(t.date).toLocaleDateString()},"${t.student}","${t.courseTitle}",${t.amount},${t.commission},${t.status}\n`;
+            });
+            
+            downloadCSV(csv, 'transactions.csv');
+        }
+
+        // Export chart
+        function exportChart() {
+            showToast('Info', 'Chart export feature coming soon!', 'info');
+        }
+
+        // Download CSV
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            showToast('Success', 'CSV exported successfully!', 'success');
+        }
+
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            const toastHtml = `
+                <div class="toast align-items-center text-white bg-${type} border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            $('.toast-container').append(toastHtml);
+            const toast = new bootstrap.Toast($('.toast').last()[0]);
+            toast.show();
+            $('.toast').last()[0].addEventListener('hidden.bs.toast', function() { this.remove(); });
+        }
+
+        // Load instructor profile
+        function loadInstructorProfile() {
+            if (currentUser) {
+                $('#instructorWelcome').html(`<i class="fas fa-chalkboard-teacher"></i> ${currentUser.name}`);
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '../../login.html';
+        }
+
+        // Event listeners
+        $(document).ready(function() {
+            checkAuth();
+            loadInstructorProfile();
+            loadSalesData();
+            
+            $('#logoutBtn').on('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        });
+    </script>
 </body>
 </html>

@@ -4,8 +4,302 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | Course Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/course-detail.css">
 </head>
 <body>
-    
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">📚 EduLink Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="classrooms.html"><i class="fas fa-chalkboard"></i> Classrooms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="users.html">
+                                <i class="fas fa-users"></i> User Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="courses.html">
+                                <i class="fas fa-book"></i> Course Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="classrooms.html">
+                                <i class="fas fa-chalkboard"></i> Classroom Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="analytics.html">
+                                <i class="fas fa-chart-line"></i> Analytics
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Quick Actions -->
+                    <div class="mt-4 p-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-tools"></i>
+                            <strong>Admin Controls</strong>
+                            <hr>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-sm btn-primary" onclick="editCourse()">
+                                    <i class="fas fa-edit"></i> Edit Course
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteCourse()">
+                                    <i class="fas fa-trash"></i> Delete Course
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-book"></i> Course Details
+                    </h1>
+                    <div id="adminWelcome" class="text-muted"></div>
+                </div>
+
+                <!-- Course Header -->
+                <div class="course-header">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <img id="courseImage" class="course-image-large" src="" alt="Course">
+                            </div>
+                            <div class="col-md-9">
+                                <h1 id="courseTitle" class="display-5 fw-bold"></h1>
+                                <p id="courseDescription" class="lead"></p>
+                                <div class="mt-3">
+                                    <span class="badge bg-light text-dark me-2" id="courseLevel"></span>
+                                    <span class="badge bg-light text-dark me-2">
+                                        <i class="fas fa-user"></i> <span id="instructorName"></span>
+                                    </span>
+                                    <span class="badge bg-light text-dark me-2">
+                                        <i class="fas fa-clock"></i> <span id="courseDuration"></span>
+                                    </span>
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fas fa-dollar-sign"></i> <span id="coursePrice"></span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <!-- Statistics -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="stats-card">
+                                    <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                    <div class="stats-number" id="totalStudents">0</div>
+                                    <div>Enrolled Students</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stats-card">
+                                    <i class="fas fa-star fa-2x text-warning mb-2"></i>
+                                    <div class="stats-number" id="courseRating">0</div>
+                                    <div>Rating (5.0)</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Course Information -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-info-circle"></i> Course Information
+                                <i class="fas fa-edit edit-field float-end" onclick="editCourse()"></i>
+                            </h5>
+                            <hr>
+                            <div class="info-label">Course ID</div>
+                            <div class="info-value" id="courseIdDisplay"></div>
+                            
+                            <div class="info-label">Instructor Email</div>
+                            <div class="info-value" id="instructorEmail"></div>
+                            
+                            <div class="info-label">Created Date</div>
+                            <div class="info-value" id="createdDate"></div>
+                            
+                            <div class="info-label">Last Updated</div>
+                            <div class="info-value" id="updatedDate"></div>
+                            
+                            <div class="info-label">Total Lessons</div>
+                            <div class="info-value" id="totalLessons">0</div>
+                        </div>
+                        
+                        <!-- Curriculum -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-list"></i> Course Curriculum
+                                <button class="btn btn-sm btn-primary float-end" onclick="addLesson()">
+                                    <i class="fas fa-plus"></i> Add Lesson
+                                </button>
+                            </h5>
+                            <hr>
+                            <div id="curriculumList"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <!-- Enrolled Students -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-users"></i> Enrolled Students
+                                <button class="btn btn-sm btn-primary float-end" onclick="addStudent()">
+                                    <i class="fas fa-user-plus"></i> Add Student
+                                </button>
+                            </h5>
+                            <hr>
+                            <div class="enrollment-table">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Progress</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="studentsList"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- Student Reviews -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-star"></i> Student Reviews
+                                <span id="averageRating" class="float-end"></span>
+                            </h5>
+                            <hr>
+                            <div id="reviewsList"></div>
+                        </div>
+                        
+                        <!-- Performance Metrics -->
+                        <div class="info-card">
+                            <h5><i class="fas fa-chart-line"></i> Performance Metrics</h5>
+                            <hr>
+                            <div class="mb-3">
+                                <label>Completion Rate</label>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" id="completionRate" style="width: 0%"></div>
+                                </div>
+                                <small id="completionRateText">0%</small>
+                            </div>
+                            <div class="mb-3">
+                                <label>Average Grade</label>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" id="avgGrade" style="width: 0%"></div>
+                                </div>
+                                <small id="avgGradeText">0%</small>
+                            </div>
+                            <div class="mb-3">
+                                <label>Satisfaction Score</label>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" id="satisfactionScore" style="width: 0%"></div>
+                                </div>
+                                <small id="satisfactionText">0%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div class="modal fade" id="editCourseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Course</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editCourseForm">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Course Title</label>
+                                <input type="text" class="form-control" id="editTitle" required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" id="editDescription" rows="3" required></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Duration</label>
+                                <input type="text" class="form-control" id="editDuration" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Price ($)</label>
+                                <input type="number" class="form-control" id="editPrice" step="0.01" required>
+                            </div>
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Image URL</label>
+                                <input type="text" class="form-control" id="editImage">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveCourseEdit()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/course-detail.js"></script>    
 </body>
 </html>

@@ -4,8 +4,1008 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructor | Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            object-fit: cover;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .edit-btn {
+            float: right;
+            cursor: pointer;
+            color: #28a745;
+            transition: color 0.3s;
+        }
+        
+        .edit-btn:hover {
+            color: #20c997;
+        }
+        
+        .activity-item {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .activity-icon.course {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .activity-icon.student {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .activity-icon.earning {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .skill-tag {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .skill-tag i {
+            cursor: pointer;
+            margin-left: 8px;
+            color: #dc3545;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-close-white {
+            filter: brightness(0) invert(1);
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        .expertise-badge {
+            display: inline-block;
+            background: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.85rem;
+        }
+        
+        .expertise-badge i {
+            margin-right: 5px;
+            color: #28a745;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .info-card, .stat-card {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .password-strength {
+            height: 5px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .strength-weak { background: #dc3545; width: 33%; }
+        .strength-medium { background: #ffc107; width: 66%; }
+        .strength-strong { background: #28a745; width: 100%; }
+        
+        .social-link {
+            display: inline-block;
+            margin-right: 10px;
+            color: #666;
+            transition: color 0.3s;
+        }
+        
+        .social-link:hover {
+            color: #28a745;
+        }
+    </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">📚 EduLink Instructor</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-courses.html"><i class="fas fa-book"></i> My Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="classrooms.html"><i class="fas fa-chalkboard"></i> Classrooms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="community.html"><i class="fas fa-comments"></i> Community</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="my-courses.html">
+                                <i class="fas fa-book-open"></i> My Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="classrooms.html">
+                                <i class="fas fa-chalkboard"></i> My Classrooms
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="analytics.html">
+                                <i class="fas fa-chart-line"></i> Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="profile.html">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Instructor Badge -->
+                    <div class="mt-4 p-3">
+                        <div class="alert alert-success">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <strong>Instructor</strong>
+                            <hr>
+                            <small>Teaching since: <span id="teachingSince">2024</span></small><br>
+                            <small>Courses: <span id="courseCount">0</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <div class="profile-header">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center">
+                                <img id="profileAvatar" class="profile-avatar" src="" alt="Profile">
+                                <button class="btn btn-sm btn-light mt-2" onclick="changeAvatar()">
+                                    <i class="fas fa-camera"></i> Change Photo
+                                </button>
+                            </div>
+                            <div class="col-md-9">
+                                <h1 id="profileName" class="display-5 fw-bold"></h1>
+                                <p class="lead">
+                                    <i class="fas fa-envelope"></i> <span id="profileEmail"></span><br>
+                                    <i class="fas fa-calendar-alt"></i> Instructor since: <span id="memberSince"></span>
+                                </p>
+                                <div id="profileBio" class="mt-2">
+                                    <span class="badge bg-light text-dark">
+                                        <i class="fas fa-chalkboard-teacher"></i> Certified Instructor
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Left Column -->
+                    <div class="col-md-6">
+                        <!-- Statistics Cards -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="stat-value" id="instructorCourses">0</div>
+                                    <div class="stat-label">Courses Created</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="stat-card">
+                                    <div class="stat-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <div class="stat-value" id="instructorStudents">0</div>
+                                    <div class="stat-label">Total Students</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Personal Information -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-user-circle"></i> Personal Information
+                                <i class="fas fa-edit edit-btn" onclick="editPersonalInfo()"></i>
+                            </h5>
+                            <hr>
+                            <div class="info-label">Full Name</div>
+                            <div class="info-value" id="displayName"></div>
+                            
+                            <div class="info-label">Email Address</div>
+                            <div class="info-value" id="displayEmail"></div>
+                            
+                            <div class="info-label">Phone Number</div>
+                            <div class="info-value" id="displayPhone"></div>
+                            
+                            <div class="info-label">Specialization</div>
+                            <div class="info-value" id="displaySpecialization"></div>
+                            
+                            <div class="info-label">Years of Experience</div>
+                            <div class="info-value" id="displayExperience"></div>
+                        </div>
+                        
+                        <!-- Expertise Areas -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-code"></i> Areas of Expertise
+                                <i class="fas fa-plus edit-btn" onclick="addExpertise()"></i>
+                            </h5>
+                            <hr>
+                            <div id="expertiseContainer"></div>
+                        </div>
+                        
+                        <!-- Social Links -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-share-alt"></i> Social & Professional Links
+                                <i class="fas fa-edit edit-btn" onclick="editSocialLinks()"></i>
+                            </h5>
+                            <hr>
+                            <div id="socialLinks"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column -->
+                    <div class="col-md-6">
+                        <!-- Recent Activity -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-history"></i> Recent Activity
+                                <button class="btn btn-sm btn-link float-end" onclick="viewAllActivities()">View All</button>
+                            </h5>
+                            <hr>
+                            <div id="recentActivity"></div>
+                        </div>
+                        
+                        <!-- Account Security -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-shield-alt"></i> Account Security
+                            </h5>
+                            <hr>
+                            <div class="security-item mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Password</strong>
+                                        <div class="text-muted small">Last changed 30 days ago</div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-success" onclick="changePassword()">
+                                        <i class="fas fa-key"></i> Change
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="security-item mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Two-Factor Authentication</strong>
+                                        <div class="text-muted small">Add an extra layer of security</div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-success" onclick="enable2FA()">
+                                        <i class="fas fa-shield-alt"></i> Enable
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="security-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>Session Management</strong>
+                                        <div class="text-muted small">Active sessions: 1</div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="logoutAllDevices()">
+                                        <i class="fas fa-sign-out-alt"></i> Logout All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Teaching Stats -->
+                        <div class="info-card">
+                            <h5>
+                                <i class="fas fa-chart-line"></i> Teaching Statistics
+                            </h5>
+                            <hr>
+                            <div class="mb-3">
+                                <label>Average Course Rating</label>
+                                <div class="d-flex align-items-center">
+                                    <div class="rating-stars me-2" id="avgRatingStars"></div>
+                                    <span id="avgRatingValue">0.0</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label>Student Satisfaction</label>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" id="satisfactionRate" style="width: 0%"></div>
+                                </div>
+                                <small id="satisfactionText">0%</small>
+                            </div>
+                            <div class="mb-3">
+                                <label>Course Completion Rate</label>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" id="completionRate" style="width: 0%"></div>
+                                </div>
+                                <small id="completionText">0%</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Personal Info Modal -->
+    <div class="modal fade" id="editPersonalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Personal Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPersonalForm">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="editName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="editPhone">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Specialization</label>
+                            <input type="text" class="form-control" id="editSpecialization">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Years of Experience</label>
+                            <input type="number" class="form-control" id="editExperience">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control" id="editBio" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="savePersonalInfo()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="passwordForm">
+                        <div class="mb-3">
+                            <label class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" required onkeyup="checkPasswordStrength()">
+                            <div class="password-strength mt-2">
+                                <div class="strength-bar" id="strengthBar"></div>
+                            </div>
+                            <small class="text-muted" id="passwordHint">Use at least 8 characters with letters and numbers</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="updatePassword()">Update Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expertise Modal -->
+    <div class="modal fade" id="addExpertiseModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Area of Expertise</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Expertise Area</label>
+                        <input type="text" class="form-control" id="newExpertise" placeholder="e.g., Web Development, Python, React">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="addNewExpertise()">Add Expertise</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Social Links Modal -->
+    <div class="modal fade" id="socialLinksModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Social Links</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="socialLinksForm">
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fab fa-linkedin"></i> LinkedIn</label>
+                            <input type="url" class="form-control" id="linkedinUrl" placeholder="https://linkedin.com/in/...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fab fa-github"></i> GitHub</label>
+                            <input type="url" class="form-control" id="githubUrl" placeholder="https://github.com/...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fab fa-twitter"></i> Twitter</label>
+                            <input type="url" class="form-control" id="twitterUrl" placeholder="https://twitter.com/...">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label"><i class="fas fa-globe"></i> Personal Website</label>
+                            <input type="url" class="form-control" id="websiteUrl" placeholder="https://...">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="saveSocialLinks()">Save Links</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script>
+        let currentUser = null;
+        let instructorProfile = {};
+        let expertiseAreas = [];
+        let socialLinks = {};
+
+        // Check authentication
+        function checkAuth() {
+            const user = localStorage.getItem('currentUser');
+            if (!user) {
+                window.location.href = '../../login.html';
+                return null;
+            }
+            currentUser = JSON.parse(user);
+            if (currentUser.role !== 'instructor') {
+                window.location.href = `../../pages/${currentUser.role}/dashboard.html`;
+                return null;
+            }
+            return currentUser;
+        }
+
+        // Load profile data
+        async function loadProfile() {
+            // Load from localStorage or use defaults
+            const savedProfile = localStorage.getItem(`instructor_profile_${currentUser.id}`);
+            if (savedProfile) {
+                instructorProfile = JSON.parse(savedProfile);
+            } else {
+                instructorProfile = {
+                    name: currentUser.name,
+                    email: currentUser.email,
+                    phone: currentUser.phone || '+1 (555) 123-4567',
+                    specialization: 'Full Stack Development',
+                    experience: 5,
+                    bio: 'Passionate educator with over 5 years of experience in web development. Love helping students achieve their learning goals.',
+                    avatar: currentUser.avatar || `https://randomuser.me/api/portraits/${currentUser.id % 2 === 0 ? 'men' : 'women'}/${currentUser.id}.jpg`,
+                    joinDate: currentUser.joinDate || '2023-06-10',
+                    expertise: ['Web Development', 'JavaScript', 'React', 'Node.js', 'Python'],
+                    socialLinks: {
+                        linkedin: 'https://linkedin.com/in/johndoe',
+                        github: 'https://github.com/johndoe',
+                        twitter: 'https://twitter.com/johndoe',
+                        website: 'https://johndoe.com'
+                    }
+                };
+                saveProfile();
+            }
+            
+            expertiseAreas = instructorProfile.expertise || [];
+            socialLinks = instructorProfile.socialLinks || {};
+            
+            renderProfile();
+            loadStats();
+            loadRecentActivity();
+            loadTeachingStats();
+        }
+
+        // Save profile
+        function saveProfile() {
+            instructorProfile.expertise = expertiseAreas;
+            instructorProfile.socialLinks = socialLinks;
+            localStorage.setItem(`instructor_profile_${currentUser.id}`, JSON.stringify(instructorProfile));
+            // Update currentUser
+            currentUser.name = instructorProfile.name;
+            currentUser.avatar = instructorProfile.avatar;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+
+        // Render profile
+        function renderProfile() {
+            $('#profileAvatar').attr('src', instructorProfile.avatar);
+            $('#profileName').text(instructorProfile.name);
+            $('#profileEmail').text(instructorProfile.email);
+            $('#memberSince').text(new Date(instructorProfile.joinDate).toLocaleDateString());
+            $('#profileBio').html(`<i class="fas fa-quote-left"></i> ${instructorProfile.bio}`);
+            
+            $('#displayName').text(instructorProfile.name);
+            $('#displayEmail').text(instructorProfile.email);
+            $('#displayPhone').text(instructorProfile.phone);
+            $('#displaySpecialization').text(instructorProfile.specialization);
+            $('#displayExperience').text(instructorProfile.experience + ' years');
+            
+            // Render expertise areas
+            let expertiseHtml = '';
+            expertiseAreas.forEach(area => {
+                expertiseHtml += `
+                    <span class="expertise-badge">
+                        ${area} <i class="fas fa-times" onclick="removeExpertise('${area}')"></i>
+                    </span>
+                `;
+            });
+            $('#expertiseContainer').html(expertiseHtml || '<p class="text-muted">No expertise areas added</p>');
+            
+            // Render social links
+            let socialHtml = '';
+            if (socialLinks.linkedin) {
+                socialHtml += `<a href="${socialLinks.linkedin}" target="_blank" class="social-link"><i class="fab fa-linkedin fa-2x"></i></a>`;
+            }
+            if (socialLinks.github) {
+                socialHtml += `<a href="${socialLinks.github}" target="_blank" class="social-link"><i class="fab fa-github fa-2x"></i></a>`;
+            }
+            if (socialLinks.twitter) {
+                socialHtml += `<a href="${socialLinks.twitter}" target="_blank" class="social-link"><i class="fab fa-twitter fa-2x"></i></a>`;
+            }
+            if (socialLinks.website) {
+                socialHtml += `<a href="${socialLinks.website}" target="_blank" class="social-link"><i class="fas fa-globe fa-2x"></i></a>`;
+            }
+            $('#socialLinks').html(socialHtml || '<p class="text-muted">No social links added</p>');
+        }
+
+        // Load statistics
+        async function loadStats() {
+            try {
+                const coursesResponse = await fetch('../../assets/data/courses.json');
+                const coursesData = await coursesResponse.json();
+                const myCourses = coursesData.courses.filter(c => c.instructorId === currentUser.id);
+                const totalCourses = myCourses.length;
+                const totalStudents = myCourses.reduce((sum, c) => sum + (c.students || 0), 0);
+                
+                $('#instructorCourses').text(totalCourses);
+                $('#instructorStudents').text(totalStudents.toLocaleString());
+                $('#courseCount').text(totalCourses);
+                $('#teachingSince').text(new Date(instructorProfile.joinDate).getFullYear());
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                $('#instructorCourses').text('0');
+                $('#instructorStudents').text('0');
+            }
+        }
+
+        // Load recent activity
+        function loadRecentActivity() {
+            const activities = [
+                { type: 'course', action: 'Course Updated', detail: 'Updated "Web Development Bootcamp" curriculum', time: '2 hours ago', icon: 'fa-edit' },
+                { type: 'student', action: 'New Enrollment', detail: '5 students enrolled in Python course', time: '1 day ago', icon: 'fa-user-plus' },
+                { type: 'earning', action: 'Payout Received', detail: 'Monthly earnings deposited - $1,250', time: '3 days ago', icon: 'fa-dollar-sign' }
+            ];
+            
+            let html = '';
+            activities.forEach(activity => {
+                let iconClass = '';
+                if (activity.type === 'course') iconClass = 'course';
+                else if (activity.type === 'student') iconClass = 'student';
+                else iconClass = 'earning';
+                
+                html += `
+                    <div class="activity-item">
+                        <div class="activity-icon ${iconClass}">
+                            <i class="fas ${activity.icon}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>${activity.action}</strong>
+                            <br>
+                            <small>${activity.detail}</small>
+                            <br>
+                            <small class="text-muted">${activity.time}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            $('#recentActivity').html(html);
+        }
+
+        // Load teaching stats
+        async function loadTeachingStats() {
+            try {
+                const coursesResponse = await fetch('../../assets/data/courses.json');
+                const coursesData = await coursesResponse.json();
+                const myCourses = coursesData.courses.filter(c => c.instructorId === currentUser.id);
+                
+                const avgRating = myCourses.length > 0 ? 
+                    (myCourses.reduce((sum, c) => sum + (c.rating || 0), 0) / myCourses.length) : 0;
+                
+                // Generate star rating
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    stars += `<i class="fas fa-star${i <= Math.round(avgRating) ? '' : '-o'}"></i>`;
+                }
+                $('#avgRatingStars').html(stars);
+                $('#avgRatingValue').text(avgRating.toFixed(1));
+                
+                // Simulate satisfaction and completion rates
+                const satisfaction = Math.floor(Math.random() * 20) + 75;
+                const completion = Math.floor(Math.random() * 30) + 60;
+                
+                $('#satisfactionRate').css('width', `${satisfaction}%`);
+                $('#satisfactionText').text(`${satisfaction}%`);
+                $('#completionRate').css('width', `${completion}%`);
+                $('#completionText').text(`${completion}%`);
+            } catch (error) {
+                console.error('Error loading teaching stats:', error);
+            }
+        }
+
+        // Edit personal info
+        function editPersonalInfo() {
+            $('#editName').val(instructorProfile.name);
+            $('#editPhone').val(instructorProfile.phone);
+            $('#editSpecialization').val(instructorProfile.specialization);
+            $('#editExperience').val(instructorProfile.experience);
+            $('#editBio').val(instructorProfile.bio);
+            $('#editPersonalModal').modal('show');
+        }
+
+        // Save personal info
+        function savePersonalInfo() {
+            instructorProfile.name = $('#editName').val();
+            instructorProfile.phone = $('#editPhone').val();
+            instructorProfile.specialization = $('#editSpecialization').val();
+            instructorProfile.experience = parseInt($('#editExperience').val());
+            instructorProfile.bio = $('#editBio').val();
+            
+            saveProfile();
+            renderProfile();
+            $('#editPersonalModal').modal('hide');
+            showToast('Success', 'Profile updated successfully!', 'success');
+        }
+
+        // Change avatar
+        function changeAvatar() {
+            const avatarUrl = prompt('Enter avatar image URL:', instructorProfile.avatar);
+            if (avatarUrl) {
+                instructorProfile.avatar = avatarUrl;
+                saveProfile();
+                renderProfile();
+                showToast('Success', 'Avatar updated!', 'success');
+            }
+        }
+
+        // Add expertise
+        function addExpertise() {
+            $('#addExpertiseModal').modal('show');
+        }
+
+        function addNewExpertise() {
+            const expertise = $('#newExpertise').val().trim();
+            if (expertise && !expertiseAreas.includes(expertise)) {
+                expertiseAreas.push(expertise);
+                saveProfile();
+                renderProfile();
+                showToast('Success', `Expertise "${expertise}" added!`, 'success');
+                $('#newExpertise').val('');
+                $('#addExpertiseModal').modal('hide');
+            }
+        }
+
+        function removeExpertise(expertise) {
+            expertiseAreas = expertiseAreas.filter(e => e !== expertise);
+            saveProfile();
+            renderProfile();
+            showToast('Removed', `Expertise "${expertise}" removed`, 'info');
+        }
+
+        // Edit social links
+        function editSocialLinks() {
+            $('#linkedinUrl').val(socialLinks.linkedin || '');
+            $('#githubUrl').val(socialLinks.github || '');
+            $('#twitterUrl').val(socialLinks.twitter || '');
+            $('#websiteUrl').val(socialLinks.website || '');
+            $('#socialLinksModal').modal('show');
+        }
+
+        function saveSocialLinks() {
+            socialLinks = {
+                linkedin: $('#linkedinUrl').val(),
+                github: $('#githubUrl').val(),
+                twitter: $('#twitterUrl').val(),
+                website: $('#websiteUrl').val()
+            };
+            saveProfile();
+            renderProfile();
+            $('#socialLinksModal').modal('hide');
+            showToast('Success', 'Social links updated!', 'success');
+        }
+
+        // Change password
+        function changePassword() {
+            $('#changePasswordModal').modal('show');
+        }
+
+        function checkPasswordStrength() {
+            const password = $('#newPassword').val();
+            const strengthBar = $('#strengthBar');
+            
+            if (password.length === 0) {
+                strengthBar.removeClass('strength-weak strength-medium strength-strong');
+                return;
+            }
+            
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            
+            strengthBar.removeClass('strength-weak strength-medium strength-strong');
+            
+            if (strength <= 1) {
+                strengthBar.addClass('strength-weak');
+                $('#passwordHint').text('Weak password - add more variety');
+            } else if (strength <= 3) {
+                strengthBar.addClass('strength-medium');
+                $('#passwordHint').text('Medium password - good, but could be stronger');
+            } else {
+                strengthBar.addClass('strength-strong');
+                $('#passwordHint').text('Strong password!');
+            }
+        }
+
+        function updatePassword() {
+            const currentPwd = $('#currentPassword').val();
+            const newPwd = $('#newPassword').val();
+            const confirmPwd = $('#confirmPassword').val();
+            
+            if (!currentPwd || !newPwd || !confirmPwd) {
+                showToast('Error', 'Please fill all fields', 'danger');
+                return;
+            }
+            
+            if (newPwd !== confirmPwd) {
+                showToast('Error', 'New passwords do not match', 'danger');
+                return;
+            }
+            
+            if (newPwd.length < 8) {
+                showToast('Error', 'Password must be at least 8 characters', 'danger');
+                return;
+            }
+            
+            showToast('Success', 'Password updated successfully!', 'success');
+            $('#changePasswordModal').modal('hide');
+            $('#passwordForm')[0].reset();
+        }
+
+        // Enable 2FA
+        function enable2FA() {
+            showToast('2FA Setup', 'Two-factor authentication setup would start here', 'info');
+        }
+
+        // Logout all devices
+        function logoutAllDevices() {
+            if (confirm('Log out from all devices? You will need to login again on all devices.')) {
+                showToast('Logged Out', 'Logged out from all other devices', 'success');
+            }
+        }
+
+        // View all activities
+        function viewAllActivities() {
+            showToast('Activities', 'Full activity log feature coming soon!', 'info');
+        }
+
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            const toastHtml = `
+                <div class="toast align-items-center text-white bg-${type} border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            $('.toast-container').append(toastHtml);
+            const toast = new bootstrap.Toast($('.toast').last()[0]);
+            toast.show();
+            $('.toast').last()[0].addEventListener('hidden.bs.toast', function() { this.remove(); });
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '../../login.html';
+        }
+
+        // Event listeners
+        $(document).ready(function() {
+            checkAuth();
+            loadProfile();
+            
+            $('#logoutBtn').on('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        });
+    </script>
 </body>
 </html>

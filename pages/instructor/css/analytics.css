@@ -1,4 +1,4 @@
- .sidebar {
+.sidebar {
   min-height: calc(100vh - 56px);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -19,7 +19,7 @@
 }
 
 .stat-icon {
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin-bottom: 10px;
 }
 
@@ -59,57 +59,25 @@
   font-size: 1.2rem;
   font-weight: 600;
   margin-bottom: 20px;
-  border-left: 4px solid #007bff;
+  border-left: 4px solid #28a745;
   padding-left: 10px;
 }
 
-.activity-item {
-  padding: 12px;
-  border-bottom: 1px solid #dee2e6;
-  transition: background 0.3s;
-}
-
-.activity-item:hover {
+.course-performance-item {
   background: #f8f9fa;
-}
-
-.activity-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 10px;
-}
-
-.activity-icon.user {
-  background: #e3f2fd;
-  color: #1976d2;
-}
-
-.activity-icon.course {
-  background: #e8f5e9;
-  color: #388e3c;
-}
-
-.activity-icon.sale {
-  background: #fff3e0;
-  color: #f57c00;
-}
-
-.quick-action-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-radius: 10px;
   padding: 15px;
-  margin-bottom: 15px;
-  transition: transform 0.3s;
-  cursor: pointer;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  transition: all 0.3s;
 }
 
-.quick-action-card:hover {
+.course-performance-item:hover {
+  background: #e9ecef;
   transform: translateX(5px);
+}
+
+.progress {
+  height: 8px;
 }
 
 .toast-container {
@@ -117,6 +85,14 @@
   top: 70px;
   right: 20px;
   z-index: 1050;
+}
+
+.filter-section {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes fadeIn {
@@ -135,30 +111,45 @@
   animation: fadeIn 0.5s ease;
 }
 
-.welcome-banner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 30px;
-  border-radius: 10px;
-  margin-bottom: 30px;
+.rating-stars {
+  color: #ffc107;
 }
 
-.recent-course-item {
-  display: flex;
-  align-items: center;
+.export-btn {
+  float: right;
+  margin-top: -40px;
+}
+
+@media (max-width: 768px) {
+  .export-btn {
+    float: none;
+    margin-top: 10px;
+  }
+}
+
+.date-range-selector {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+.student-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.student-item {
   padding: 10px;
   border-bottom: 1px solid #dee2e6;
   transition: background 0.3s;
 }
 
-.recent-course-item:hover {
+.student-item:hover {
   background: #f8f9fa;
 }
 
-.course-thumb {
-  width: 50px;
-  height: 50px;
-  border-radius: 8px;
-  object-fit: cover;
+.student-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   margin-right: 10px;
 }

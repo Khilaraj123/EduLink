@@ -1,0 +1,270 @@
+.sidebar {
+  min-height: calc(100vh - 56px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.post-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.avatar-sm {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.post-meta {
+  flex-grow: 1;
+}
+
+.post-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.post-content {
+  margin-bottom: 15px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.post-stats {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0;
+  border-top: 1px solid #dee2e6;
+  border-bottom: 1px solid #dee2e6;
+  margin-bottom: 15px;
+}
+
+.stat-item {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.stat-item:hover {
+  color: #28a745;
+}
+
+.stat-item i {
+  margin-right: 5px;
+}
+
+.comment-section {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+}
+
+.comment {
+  display: flex;
+  margin-bottom: 15px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.comment-content {
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.comment-author {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.comment-text {
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.comment-time {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.reply-btn {
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #28a745;
+}
+
+.reply-btn:hover {
+  text-decoration: underline;
+}
+
+.replies {
+  margin-left: 45px;
+  margin-top: 10px;
+}
+
+.reply {
+  background: #e9ecef;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.create-post-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.category-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.trending-tag {
+  display: inline-block;
+  background: #e9ecef;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin: 5px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.trending-tag:hover {
+  background: #28a745;
+  color: white;
+}
+
+.active-tag {
+  background: #28a745;
+  color: white;
+}
+
+.stats-card {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.stats-number {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.toast-container {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 1050;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.empty-state i {
+  font-size: 4rem;
+  color: #dee2e6;
+  margin-bottom: 20px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.post-card {
+  animation: fadeIn 0.5s ease;
+}
+
+.badge-category {
+  background: #28a745;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  margin-left: 10px;
+}
+
+.badge-instructor {
+  background: #28a745;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  margin-left: 5px;
+}
+
+.upvoted {
+  color: #dc3545;
+}
+
+.bookmarked {
+  color: #ffc107;
+}
+
+.filter-section {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.search-box {
+  position: relative;
+}
+
+.search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.search-input {
+  padding-left: 40px;
+}

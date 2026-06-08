@@ -4,8 +4,263 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
-    
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">📚 EduLink Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html"><i class="fas fa-users"></i> Users</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sales.html"><i class="fas fa-dollar-sign"></i> Sales</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="classrooms.html"><i class="fas fa-chalkboard"></i> Classrooms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="users.html">
+                                <i class="fas fa-users"></i> User Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="courses.html">
+                                <i class="fas fa-book"></i> Course Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="classrooms.html">
+                                <i class="fas fa-chalkboard"></i> Classroom Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="analytics.html">
+                                <i class="fas fa-chart-line"></i> Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="sales.html">
+                                <i class="fas fa-chart-bar"></i> Sales Reports
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- System Status -->
+                    <div class="mt-4 p-3">
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i>
+                            <strong>System Status</strong>
+                            <hr>
+                            <small>All systems operational</small><br>
+                            <small>Last backup: Today 02:00 AM</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 id="adminName">Welcome back, Admin!</h2>
+                            <p class="mb-0">Here's what's happening with your platform today.</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-chart-line fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='users.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-users" style="color: #007bff;"></i>
+                            </div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-trend">
+                                <span id="userTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +12%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='courses.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-book" style="color: #28a745;"></i>
+                            </div>
+                            <div class="stat-value" id="totalCourses">0</div>
+                            <div class="stat-label">Total Courses</div>
+                            <div class="stat-trend">
+                                <span id="courseTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +8%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='sales.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign" style="color: #ffc107;"></i>
+                            </div>
+                            <div class="stat-value" id="totalRevenue">$0</div>
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-trend">
+                                <span id="revenueTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +15%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='analytics.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-chalkboard" style="color: #17a2b8;"></i>
+                            </div>
+                            <div class="stat-value" id="totalClassrooms">0</div>
+                            <div class="stat-label">Active Classrooms</div>
+                            <div class="stat-trend">
+                                <span id="classroomTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +5%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Charts -->
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-line"></i> User Growth
+                            </div>
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-pie"></i> Revenue Distribution
+                            </div>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Recent Activities -->
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-history"></i> Recent Activities
+                            </div>
+                            <div id="recentActivities"></div>
+                            <div class="text-center mt-3">
+                                <button class="btn btn-sm btn-outline-primary" onclick="loadMoreActivities()">
+                                    View All Activities
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-bolt"></i> Quick Actions
+                            </div>
+                            <div class="quick-action-card" onclick="window.location.href='users.html?action=add'">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-user-plus fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Add New User</h6>
+                                        <small>Create student or instructor account</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="quick-action-card" onclick="window.location.href='courses.html?action=add'">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-plus-circle fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Create Course</h6>
+                                        <small>Add a new course to the platform</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="quick-action-card" onclick="window.location.href='classrooms.html?action=add'">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-chalkboard fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Create Classroom</h6>
+                                        <small>Set up a new virtual classroom</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="quick-action-card" onclick="generateReport()">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file-alt fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Generate Report</h6>
+                                        <small>Download platform analytics report</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Courses -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-book"></i> Recently Added Courses
+                    </div>
+                    <div id="recentCourses"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

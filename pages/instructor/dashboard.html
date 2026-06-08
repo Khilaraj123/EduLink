@@ -4,8 +4,776 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instructor | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .stat-trend {
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        
+        .trend-up {
+            color: #28a745;
+        }
+        
+        .trend-down {
+            color: #dc3545;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            padding-left: 10px;
+        }
+        
+        .activity-item {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .activity-icon.student {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .activity-icon.course {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .activity-icon.revenue {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .quick-action-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .quick-action-card:hover {
+            transform: translateX(5px);
+        }
+        
+        .toast-container {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 1050;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stat-card, .chart-card {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .welcome-banner {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .course-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            transition: background 0.3s;
+            cursor: pointer;
+        }
+        
+        .course-item:hover {
+            background: #f8f9fa;
+        }
+        
+        .course-thumb {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .rating-stars {
+            color: #ffc107;
+            font-size: 0.8rem;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+        }
+    </style>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">📚 EduLink Instructor</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-courses.html"><i class="fas fa-book"></i> My Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="classrooms.html"><i class="fas fa-chalkboard"></i> Classrooms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="analytics.html"><i class="fas fa-chart-line"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="community.html"><i class="fas fa-comments"></i> Community</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="my-courses.html">
+                                <i class="fas fa-book-open"></i> My Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="classrooms.html">
+                                <i class="fas fa-chalkboard"></i> My Classrooms
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="analytics.html">
+                                <i class="fas fa-chart-line"></i> Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="community.html">
+                                <i class="fas fa-comments"></i> Community
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Tips Card -->
+                    <div class="mt-4 p-3">
+                        <div class="alert alert-success">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Pro Tip</strong>
+                            <hr>
+                            <small>Engage with your students regularly to increase course completion rates!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 id="instructorName">Welcome back, Instructor!</h2>
+                            <p class="mb-0">Here's an overview of your teaching performance.</p>
+                        </div>
+                        <div>
+                            <i class="fas fa-chalkboard-teacher fa-3x"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='my-courses.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-book" style="color: #28a745;"></i>
+                            </div>
+                            <div class="stat-value" id="totalCourses">0</div>
+                            <div class="stat-label">Total Courses</div>
+                            <div class="stat-trend">
+                                <span id="courseTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +2</span> this month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='analytics.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-users" style="color: #17a2b8;"></i>
+                            </div>
+                            <div class="stat-value" id="totalStudents">0</div>
+                            <div class="stat-label">Total Students</div>
+                            <div class="stat-trend">
+                                <span id="studentTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +15%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='analytics.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign" style="color: #ffc107;"></i>
+                            </div>
+                            <div class="stat-value" id="totalRevenue">$0</div>
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-trend">
+                                <span id="revenueTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +12%</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card" onclick="window.location.href='analytics.html'">
+                            <div class="stat-icon">
+                                <i class="fas fa-star" style="color: #dc3545;"></i>
+                            </div>
+                            <div class="stat-value" id="avgRating">0.0</div>
+                            <div class="stat-label">Average Rating</div>
+                            <div class="stat-trend">
+                                <span id="ratingTrend" class="trend-up"><i class="fas fa-arrow-up"></i> +0.2</span> vs last month
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Charts -->
+                    <div class="col-md-8">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-line"></i> Revenue & Enrollment Trends
+                            </div>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-pie"></i> Course Distribution
+                            </div>
+                            <canvas id="courseDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Recent Activities -->
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-history"></i> Recent Activities
+                            </div>
+                            <div id="recentActivities"></div>
+                            <div class="text-center mt-3">
+                                <button class="btn btn-sm btn-outline-success" onclick="viewAllActivities()">
+                                    View All Activities
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <div class="chart-title">
+                                <i class="fas fa-bolt"></i> Quick Actions
+                            </div>
+                            <div class="quick-action-card" onclick="window.location.href='my-courses.html?action=add'">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-plus-circle fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Create New Course</h6>
+                                        <small>Share your expertise with students</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="quick-action-card" onclick="window.location.href='classrooms.html?action=add'">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-chalkboard fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Create Classroom</h6>
+                                        <small>Set up a virtual learning space</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="quick-action-card" onclick="window.location.href='community.html'">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-comments fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Post Announcement</h6>
+                                        <small>Communicate with your students</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="quick-action-card" onclick="generateReport()">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-file-alt fa-2x me-3"></i>
+                                    <div>
+                                        <h6 class="mb-0">Generate Report</h6>
+                                        <small>Download performance report</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Courses -->
+                <div class="chart-card">
+                    <div class="chart-title">
+                        <i class="fas fa-book"></i> Your Recent Courses
+                    </div>
+                    <div id="recentCourses"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
+    <script>
+        let currentUser = null;
+        let revenueChart, courseDistributionChart;
+        let myCourses = [];
+
+        // Check authentication
+        function checkAuth() {
+            const user = localStorage.getItem('currentUser');
+            if (!user) {
+                window.location.href = '../../login.html';
+                return null;
+            }
+            currentUser = JSON.parse(user);
+            if (currentUser.role !== 'instructor') {
+                window.location.href = `../../pages/${currentUser.role}/dashboard.html`;
+                return null;
+            }
+            return currentUser;
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load courses
+                const coursesResponse = await fetch('../../assets/data/courses.json');
+                const coursesData = await coursesResponse.json();
+                myCourses = coursesData.courses.filter(c => c.instructorId === currentUser.id);
+                
+                // Load saved courses from localStorage
+                loadSavedCourses();
+                
+                updateStats();
+                initializeCharts();
+                loadRecentActivities();
+                loadRecentCourses();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                showToast('Error', 'Failed to load dashboard data', 'danger');
+            }
+        }
+
+        // Load saved courses from localStorage
+        function loadSavedCourses() {
+            const saved = localStorage.getItem(`instructor_courses_${currentUser.id}`);
+            if (saved) {
+                const savedCourses = JSON.parse(saved);
+                savedCourses.forEach(savedCourse => {
+                    if (!myCourses.find(c => c.id === savedCourse.id)) {
+                        myCourses.push(savedCourse);
+                    }
+                });
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const totalCourses = myCourses.length;
+            const totalStudents = myCourses.reduce((sum, course) => sum + (course.students || 0), 0);
+            const totalRevenue = myCourses.reduce((sum, course) => sum + (course.price * (course.students || 0)), 0);
+            const avgRating = myCourses.length > 0 ? 
+                (myCourses.reduce((sum, course) => sum + (course.rating || 0), 0) / myCourses.length).toFixed(1) : 0;
+            
+            $('#totalCourses').text(totalCourses);
+            $('#totalStudents').text(totalStudents.toLocaleString());
+            $('#totalRevenue').text('$' + totalRevenue.toLocaleString());
+            $('#avgRating').text(avgRating);
+            
+            // Animate numbers
+            animateNumber('totalCourses', totalCourses);
+            animateNumber('totalStudents', totalStudents);
+            
+            // Update trends (simulated)
+            $('#courseTrend').html('<i class="fas fa-arrow-up"></i> +' + (Math.random() * 5 + 1).toFixed(0));
+            $('#studentTrend').html('<i class="fas fa-arrow-up"></i> +' + (Math.random() * 20 + 5).toFixed(0) + '%');
+            $('#revenueTrend').html('<i class="fas fa-arrow-up"></i> +' + (Math.random() * 15 + 5).toFixed(0) + '%');
+            $('#ratingTrend').html('<i class="fas fa-arrow-up"></i> +' + (Math.random() * 0.5 + 0.1).toFixed(1));
+        }
+
+        // Animate number counter
+        function animateNumber(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let currentValue = 0;
+            const increment = targetValue / 50;
+            const timer = setInterval(function() {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(currentValue).toLocaleString();
+                }
+            }, 20);
+        }
+
+        // Initialize charts
+        function initializeCharts() {
+            // Revenue Chart
+            const revenueData = generateRevenueData();
+            revenueChart = new Chart(document.getElementById('revenueChart'), {
+                type: 'line',
+                data: {
+                    labels: revenueData.labels,
+                    datasets: [
+                        {
+                            label: 'Revenue ($)',
+                            data: revenueData.revenue,
+                            borderColor: '#ffc107',
+                            backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Enrollments',
+                            data: revenueData.enrollments,
+                            borderColor: '#28a745',
+                            backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' }
+                    },
+                    scales: {
+                        y: { title: { display: true, text: 'Revenue ($)' } },
+                        y1: { position: 'right', title: { display: true, text: 'Enrollments' } }
+                    }
+                }
+            });
+            
+            // Course Distribution Chart
+            const distributionData = generateDistributionData();
+            courseDistributionChart = new Chart(document.getElementById('courseDistributionChart'), {
+                type: 'pie',
+                data: {
+                    labels: distributionData.labels,
+                    datasets: [{
+                        data: distributionData.values,
+                        backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#dc3545', '#6610f2']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        // Generate revenue data
+        function generateRevenueData() {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const revenue = months.map(() => Math.floor(Math.random() * 5000) + 1000);
+            const enrollments = months.map(() => Math.floor(Math.random() * 50) + 10);
+            return { labels: months, revenue, enrollments };
+        }
+
+        // Generate distribution data
+        function generateDistributionData() {
+            const levels = { 'Beginner': 0, 'Intermediate': 0, 'Advanced': 0 };
+            myCourses.forEach(course => {
+                if (course.level === 'Beginner') levels.Beginner++;
+                else if (course.level === 'Intermediate') levels.Intermediate++;
+                else if (course.level === 'Advanced') levels.Advanced++;
+            });
+            
+            return {
+                labels: Object.keys(levels),
+                values: Object.values(levels)
+            };
+        }
+
+        // Load recent activities
+        function loadRecentActivities() {
+            const activities = [
+                { type: 'student', action: 'New enrollment', detail: 'John Doe enrolled in Web Development', time: '2 hours ago', icon: 'fa-user-plus' },
+                { type: 'course', action: 'Course updated', detail: 'Updated Python course curriculum', time: '5 hours ago', icon: 'fa-edit' },
+                { type: 'revenue', action: 'New sale', detail: 'JavaScript Course - $49.99', time: '1 day ago', icon: 'fa-dollar-sign' },
+                { type: 'student', action: 'Assignment submitted', detail: '5 students submitted assignments', time: '2 days ago', icon: 'fa-tasks' },
+                { type: 'course', action: 'Review received', detail: '5-star review on React course', time: '3 days ago', icon: 'fa-star' }
+            ];
+            
+            let html = '';
+            activities.forEach(activity => {
+                let iconClass = '';
+                if (activity.type === 'student') iconClass = 'student';
+                else if (activity.type === 'course') iconClass = 'course';
+                else iconClass = 'revenue';
+                
+                html += `
+                    <div class="activity-item">
+                        <div class="activity-icon ${iconClass}">
+                            <i class="fas ${activity.icon}"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong>${activity.action}</strong>
+                            <br>
+                            <small>${activity.detail}</small>
+                            <br>
+                            <small class="text-muted">${activity.time}</small>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            $('#recentActivities').html(html);
+        }
+
+        // Load recent courses
+        function loadRecentCourses() {
+            const recentCourses = myCourses.slice(0, 5);
+            
+            if (recentCourses.length === 0) {
+                $('#recentCourses').html('<p class="text-muted text-center">No courses created yet.</p>');
+                return;
+            }
+            
+            let html = '';
+            recentCourses.forEach(course => {
+                html += `
+                    <div class="course-item" onclick="window.location.href='course-detail.html?id=${course.id}'">
+                        <img src="${course.image}" class="course-thumb" alt="${course.title}">
+                        <div class="flex-grow-1">
+                            <strong>${course.title}</strong>
+                            <br>
+                            <div class="rating-stars">
+                                ${generateStarRating(course.rating || 0)}
+                                <small class="text-muted">(${course.rating || 0})</small>
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-users"></i> ${course.students || 0} students | 
+                                <i class="fas fa-dollar-sign"></i> ${course.price}
+                            </small>
+                        </div>
+                        <i class="fas fa-chevron-right text-muted"></i>
+                    </div>
+                `;
+            });
+            
+            $('#recentCourses').html(html);
+        }
+
+        // Generate star rating
+        function generateStarRating(rating) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                stars += `<i class="fas fa-star${i <= rating ? '' : '-o'}"></i>`;
+            }
+            return stars;
+        }
+
+        // View all activities
+        function viewAllActivities() {
+            showToast('Info', 'Full activity log coming soon!', 'info');
+        }
+
+        // Generate report
+        function generateReport() {
+            const report = {
+                instructor: currentUser.name,
+                date: new Date().toISOString(),
+                totalCourses: myCourses.length,
+                totalStudents: myCourses.reduce((sum, c) => sum + (c.students || 0), 0),
+                totalRevenue: myCourses.reduce((sum, c) => sum + (c.price * (c.students || 0)), 0),
+                courses: myCourses.map(c => ({
+                    title: c.title,
+                    students: c.students,
+                    revenue: c.price * (c.students || 0),
+                    rating: c.rating
+                }))
+            };
+            
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            const exportFileDefaultName = `instructor_report_${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showToast('Success', 'Report generated and downloaded!', 'success');
+        }
+
+        // Show toast notification
+        function showToast(title, message, type = 'success') {
+            const toastHtml = `
+                <div class="toast align-items-center text-white bg-${type} border-0" role="alert" data-bs-autohide="true" data-bs-delay="3000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>${title}</strong><br>
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            $('.toast-container').append(toastHtml);
+            const toast = new bootstrap.Toast($('.toast').last()[0]);
+            toast.show();
+            $('.toast').last()[0].addEventListener('hidden.bs.toast', function() { this.remove(); });
+        }
+
+        // Load instructor profile
+        function loadInstructorProfile() {
+            if (currentUser) {
+                $('#instructorName').text(`Welcome back, ${currentUser.name.split(' ')[0]}!`);
+            }
+        }
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            loadDashboardData();
+        }, 30000);
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = '../../login.html';
+        }
+
+        // Event listeners
+        $(document).ready(function() {
+            checkAuth();
+            loadInstructorProfile();
+            loadDashboardData();
+            
+            $('#logoutBtn').on('click', function(e) {
+                e.preventDefault();
+                logout();
+            });
+        });
+    </script>
 </body>
 </html>

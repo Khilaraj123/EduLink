@@ -4,7 +4,7 @@
 }
 
 .classroom-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
   padding: 30px;
   border-radius: 10px;
@@ -96,7 +96,7 @@
 }
 
 .modal-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
   color: white;
 }
 
@@ -125,7 +125,7 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #007bff;
+  background: #28a745;
 }
 
 .timeline-date {
@@ -150,7 +150,7 @@
 .stat-number {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #007bff;
+  color: #28a745;
 }
 
 .toast-container {
@@ -185,10 +185,36 @@
   height: 8px;
 }
 
-.badge-role {
-  background: #007bff;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 0.7rem;
+.resource-item {
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.resource-item:hover {
+  background: #f8f9fa;
+  padding-left: 20px;
+}
+
+.announcement-item {
+  background: #f8f9fa;
+  border-left: 4px solid #28a745;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.discussion-item {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.reply-box {
+  display: none;
+  margin-top: 10px;
+  padding-left: 50px;
 }
