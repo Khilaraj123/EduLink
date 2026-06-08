@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student | My Courses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/my-courses.css">
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">📚 EduLink</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="my-courses.html"><i class="fas fa-graduation-cap"></i> My Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="community.html"><i class="fas fa-comments"></i> Community</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="my-courses.html">
+                                <i class="fas fa-book-open"></i> My Learning
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="classroom.html">
+                                <i class="fas fa-chalkboard"></i> My Classrooms
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="assignments.html">
+                                <i class="fas fa-tasks"></i> Assignments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="certificates.html">
+                                <i class="fas fa-certificate"></i> Certificates
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Learning Tips -->
+                    <div class="mt-4 p-3">
+                        <div class="alert alert-success">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Learning Tip</strong>
+                            <hr>
+                            <small>Set aside 30 minutes daily for your courses to maintain consistency and improve retention!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-graduation-cap"></i> My Courses
+                    </h1>
+                    <div id="userWelcome" class="text-muted"></div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stats-card">
+                            <i class="fas fa-book"></i>
+                            <div class="stats-number" id="totalCourses">0</div>
+                            <div>Total Enrolled</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="stats-number" id="completedCourses">0</div>
+                            <div>Completed</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                            <i class="fas fa-chart-line"></i>
+                            <div class="stats-number" id="inProgressCourses">0</div>
+                            <div>In Progress</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stats-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                            <i class="fas fa-trophy"></i>
+                            <div class="stats-number" id="completionRate">0%</div>
+                            <div>Completion Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs for Different Views -->
+                <ul class="nav nav-tabs" id="courseTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab">
+                            <i class="fas fa-list"></i> All Courses
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="progress-tab" data-bs-toggle="tab" data-bs-target="#progress" type="button" role="tab">
+                            <i class="fas fa-spinner"></i> In Progress
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="completed-tab" data-bs-toggle="tab" data-bs-target="#completed" type="button" role="tab">
+                            <i class="fas fa-check"></i> Completed
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="recent-tab" data-bs-toggle="tab" data-bs-target="#recent" type="button" role="tab">
+                            <i class="fas fa-clock"></i> Recently Added
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="courseTabContent">
+                    <!-- All Courses Tab -->
+                    <div class="tab-pane fade show active" id="all" role="tabpanel">
+                        <div class="filter-section">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                        <input type="text" id="searchInput" class="form-control" placeholder="Search your courses...">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <select id="sortSelect" class="form-select">
+                                        <option value="recent">Recently Enrolled</option>
+                                        <option value="progress">Progress (High to Low)</option>
+                                        <option value="title">Title A-Z</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="allCoursesContainer"></div>
+                    </div>
+
+                    <!-- In Progress Tab -->
+                    <div class="tab-pane fade" id="progress" role="tabpanel">
+                        <div id="progressCoursesContainer"></div>
+                    </div>
+
+                    <!-- Completed Tab -->
+                    <div class="tab-pane fade" id="completed" role="tabpanel">
+                        <div id="completedCoursesContainer"></div>
+                    </div>
+
+                    <!-- Recent Tab -->
+                    <div class="tab-pane fade" id="recent" role="tabpanel">
+                        <div id="recentCoursesContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Detail Modal -->
+    <div class="modal fade" id="courseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCourseTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalCourseContent">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" id="continueLearningBtn" class="btn btn-primary">Continue Learning</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/my-courses.js"></script>    
+</body>
+</html>

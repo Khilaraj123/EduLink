@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student | Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">📚 EduLink</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="courses.html"><i class="fas fa-book"></i> Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="my-courses.html"><i class="fas fa-graduation-cap"></i> My Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="classroom.html"><i class="fas fa-chalkboard"></i> Classroom</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="community.html"><i class="fas fa-comments"></i> Community</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.html"><i class="fas fa-user"></i> Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="my-courses.html">
+                                <i class="fas fa-book-open"></i> My Learning
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="classroom.html">
+                                <i class="fas fa-chalkboard"></i> My Classrooms
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="profile.html">
+                                <i class="fas fa-user"></i> My Profile
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Profile Completion -->
+                    <div class="mt-4 p-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-chart-line"></i>
+                            <strong>Profile Strength</strong>
+                            <hr>
+                            <div class="progress mb-2">
+                                <div class="progress-bar bg-success" id="profileStrength" style="width: 0%"></div>
+                            </div>
+                            <small id="strengthMessage"></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+                <div class="profile-header">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-3 text-center">
+                                <img id="profileAvatar" class="profile-avatar" src="" alt="Profile">
+                                <button class="btn btn-sm btn-light mt-2" onclick="changeAvatar()">
+                                    <i class="fas fa-camera"></i> Change Photo
+                                </button>
+                            </div>
+                            <div class="col-md-9">
+                                <h1 id="profileName" class="display-5 fw-bold"></h1>
+                                <p class="lead">
+                                    <i class="fas fa-envelope"></i> <span id="profileEmail"></span><br>
+                                    <i class="fas fa-calendar-alt"></i> Member since: <span id="memberSince"></span>
+                                </p>
+                                <div id="profileBio" class="mt-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <!-- Statistics Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="stat-value" id="totalCourses">0</div>
+                                <div class="stat-label">Courses Enrolled</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-certificate"></i>
+                                </div>
+                                <div class="stat-value" id="certificatesEarned">0</div>
+                                <div class="stat-label">Certificates</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="stat-value" id="learningHours">0</div>
+                                <div class="stat-label">Learning Hours</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="stat-value" id="achievementsCount">0</div>
+                                <div class="stat-label">Achievements</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <!-- Personal Information -->
+                            <div class="info-card">
+                                <h5>
+                                    <i class="fas fa-user-circle"></i> Personal Information
+                                    <i class="fas fa-edit edit-btn" onclick="editPersonalInfo()"></i>
+                                </h5>
+                                <hr>
+                                <div class="info-label">Full Name</div>
+                                <div class="info-value" id="displayName"></div>
+                                
+                                <div class="info-label">Email Address</div>
+                                <div class="info-value" id="displayEmail"></div>
+                                
+                                <div class="info-label">Phone Number</div>
+                                <div class="info-value" id="displayPhone"></div>
+                                
+                                <div class="info-label">Location</div>
+                                <div class="info-value" id="displayLocation"></div>
+                                
+                                <div class="info-label">Occupation</div>
+                                <div class="info-value" id="displayOccupation"></div>
+                            </div>
+                            
+                            <!-- Skills -->
+                            <div class="info-card">
+                                <h5>
+                                    <i class="fas fa-code"></i> Skills & Expertise
+                                    <i class="fas fa-plus edit-btn" onclick="addSkill()"></i>
+                                </h5>
+                                <hr>
+                                <div id="skillsContainer"></div>
+                            </div>
+                            
+                            <!-- Achievements -->
+                            <div class="info-card">
+                                <h5>
+                                    <i class="fas fa-medal"></i> Achievements
+                                </h5>
+                                <hr>
+                                <div id="achievementsContainer"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <!-- Recent Activity -->
+                            <div class="info-card">
+                                <h5>
+                                    <i class="fas fa-history"></i> Recent Activity
+                                </h5>
+                                <hr>
+                                <div id="recentActivity"></div>
+                            </div>
+                            
+                            <!-- Certificates -->
+                            <div class="info-card">
+                                <h5>
+                                    <i class="fas fa-certificate"></i> Certificates Earned
+                                </h5>
+                                <hr>
+                                <div id="certificatesContainer"></div>
+                            </div>
+                            
+                            <!-- Learning Goals -->
+                            <div class="info-card">
+                                <h5>
+                                    <i class="fas fa-bullseye"></i> Learning Goals
+                                    <i class="fas fa-edit edit-btn" onclick="editGoals()"></i>
+                                </h5>
+                                <hr>
+                                <div id="goalsContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Personal Info Modal -->
+    <div class="modal fade" id="editPersonalModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Personal Information</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editPersonalForm">
+                        <div class="mb-3">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="editName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="editPhone">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" class="form-control" id="editLocation">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Occupation</label>
+                            <input type="text" class="form-control" id="editOccupation">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control" id="editBio" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="savePersonalInfo()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Skill Modal -->
+    <div class="modal fade" id="addSkillModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Skill</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Skill Name</label>
+                        <input type="text" class="form-control" id="newSkill" placeholder="e.g., JavaScript, Python, React">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addNewSkill()">Add Skill</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Goals Modal -->
+    <div class="modal fade" id="editGoalsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Learning Goals</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Learning Goals (one per line)</label>
+                        <textarea class="form-control" id="editGoals" rows="5" placeholder="Complete Web Development Bootcamp&#10;Learn Python&#10;Build 5 projects"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveGoals()">Save Goals</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+.sidebar {
+  min-height: calc(100vh - 56px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.course-card {
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.course-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.badge-level {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.enrolled-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.search-filter {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.rating {
+  color: #ffc107;
+}
+
+.btn-enroll {
+  width: 100%;
+}
+
+.filter-section {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-title {
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+}
+
+.toast-container {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 1050;
+}
+
+.loader {
+  text-align: center;
+  padding: 50px;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}

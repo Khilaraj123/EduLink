@@ -1,0 +1,324 @@
+{
+  "classrooms": [
+    {
+      "id": 201,
+      "courseId": 101,
+      "name": "Web Dev - Batch 2024",
+      "instructorId": 2,
+      "students": [1, 2, 3],
+      "assignments": [
+        {
+          "id": 301,
+          "title": "Build a Portfolio Website",
+          "dueDate": "2024-02-15",
+          "submitted": true,
+          "grade": 85
+        }
+      ]
+    },
+    {
+      "id": 202,
+      "courseId": 102,
+      "name": "Python Programming - Batch 2024",
+      "instructorId": 2,
+      "students": [4, 5, 6],
+      "assignments": [
+        {
+          "id": 302,
+          "title": "Python Calculator App",
+          "dueDate": "2024-02-20",
+          "submitted": true,
+          "grade": 88
+        }
+      ]
+    },
+    {
+      "id": 203,
+      "courseId": 103,
+      "name": "Advanced Java - Batch 2024",
+      "instructorId": 11,
+      "students": [7, 8, 9],
+      "assignments": [
+        {
+          "id": 303,
+          "title": "Library Management System",
+          "dueDate": "2024-03-01",
+          "submitted": false,
+          "grade": null
+        }
+      ]
+    },
+    {
+      "id": 204,
+      "courseId": 104,
+      "name": "C# and .NET - Batch 2024",
+      "instructorId": 11,
+      "students": [10, 1, 2],
+      "assignments": [
+        {
+          "id": 304,
+          "title": "ASP.NET MVC Project",
+          "dueDate": "2024-03-05",
+          "submitted": true,
+          "grade": 90
+        }
+      ]
+    },
+    {
+      "id": 205,
+      "courseId": 105,
+      "name": "DSA - Batch 2024",
+      "instructorId": 12,
+      "students": [3, 4, 5],
+      "assignments": [
+        {
+          "id": 305,
+          "title": "Binary Tree Implementation",
+          "dueDate": "2024-03-10",
+          "submitted": true,
+          "grade": 92
+        }
+      ]
+    },
+    {
+      "id": 206,
+      "courseId": 106,
+      "name": "Machine Learning - Batch 2024",
+      "instructorId": 12,
+      "students": [6, 7, 8],
+      "assignments": [
+        {
+          "id": 306,
+          "title": "Regression Model Project",
+          "dueDate": "2024-03-15",
+          "submitted": false,
+          "grade": null
+        }
+      ]
+    },
+    {
+      "id": 207,
+      "courseId": 107,
+      "name": "UI UX Design - Batch 2024",
+      "instructorId": 13,
+      "students": [9, 10, 1],
+      "assignments": [
+        {
+          "id": 307,
+          "title": "Design a Mobile App UI",
+          "dueDate": "2024-03-20",
+          "submitted": true,
+          "grade": 87
+        }
+      ]
+    },
+    {
+      "id": 208,
+      "courseId": 108,
+      "name": "Flutter Development - Batch 2024",
+      "instructorId": 13,
+      "students": [2, 3, 4],
+      "assignments": [
+        {
+          "id": 308,
+          "title": "Build a ToDo App",
+          "dueDate": "2024-03-25",
+          "submitted": true,
+          "grade": 89
+        }
+      ]
+    },
+    {
+      "id": 209,
+      "courseId": 109,
+      "name": "Cybersecurity - Batch 2024",
+      "instructorId": 14,
+      "students": [5, 6, 7],
+      "assignments": [
+        {
+          "id": 309,
+          "title": "Network Security Report",
+          "dueDate": "2024-04-01",
+          "submitted": false,
+          "grade": null
+        }
+      ]
+    },
+    {
+      "id": 210,
+      "courseId": 110,
+      "name": "AWS Cloud - Batch 2024",
+      "instructorId": 14,
+      "students": [8, 9, 10],
+      "assignments": [
+        {
+          "id": 310,
+          "title": "Deploy an EC2 Instance",
+          "dueDate": "2024-04-05",
+          "submitted": true,
+          "grade": 91
+        }
+      ]
+    },
+    {
+      "id": 211,
+      "courseId": 111,
+      "name": "SQL Database Design - Batch 2024",
+      "instructorId": 15,
+      "students": [1, 4, 7],
+      "assignments": [
+        {
+          "id": 311,
+          "title": "Database Schema Design",
+          "dueDate": "2024-04-10",
+          "submitted": true,
+          "grade": 84
+        }
+      ]
+    },
+    {
+      "id": 212,
+      "courseId": 112,
+      "name": "DevOps Fundamentals - Batch 2024",
+      "instructorId": 15,
+      "students": [2, 5, 8],
+      "assignments": [
+        {
+          "id": 312,
+          "title": "CI/CD Pipeline Setup",
+          "dueDate": "2024-04-15",
+          "submitted": true,
+          "grade": 93
+        }
+      ]
+    },
+    {
+      "id": 213,
+      "courseId": 113,
+      "name": "AI Basics - Batch 2024",
+      "instructorId": 12,
+      "students": [3, 6, 9],
+      "assignments": [
+        {
+          "id": 313,
+          "title": "AI Research Paper",
+          "dueDate": "2024-04-20",
+          "submitted": false,
+          "grade": null
+        }
+      ]
+    },
+    {
+      "id": 214,
+      "courseId": 114,
+      "name": "JavaScript Masterclass - Batch 2024",
+      "instructorId": 11,
+      "students": [4, 7, 10],
+      "assignments": [
+        {
+          "id": 314,
+          "title": "Interactive Web App",
+          "dueDate": "2024-04-25",
+          "submitted": true,
+          "grade": 88
+        }
+      ]
+    },
+    {
+      "id": 215,
+      "courseId": 115,
+      "name": "React Guide - Batch 2024",
+      "instructorId": 11,
+      "students": [1, 5, 9],
+      "assignments": [
+        {
+          "id": 315,
+          "title": "React Dashboard",
+          "dueDate": "2024-05-01",
+          "submitted": true,
+          "grade": 90
+        }
+      ]
+    },
+    {
+      "id": 216,
+      "courseId": 116,
+      "name": "Node.js Backend - Batch 2024",
+      "instructorId": 14,
+      "students": [2, 6, 10],
+      "assignments": [
+        {
+          "id": 316,
+          "title": "REST API Development",
+          "dueDate": "2024-05-05",
+          "submitted": false,
+          "grade": null
+        }
+      ]
+    },
+    {
+      "id": 217,
+      "courseId": 117,
+      "name": "Git and GitHub - Batch 2024",
+      "instructorId": 15,
+      "students": [3, 7, 1],
+      "assignments": [
+        {
+          "id": 317,
+          "title": "Git Workflow Exercise",
+          "dueDate": "2024-05-10",
+          "submitted": true,
+          "grade": 86
+        }
+      ]
+    },
+    {
+      "id": 218,
+      "courseId": 118,
+      "name": "Computer Networks - Batch 2024",
+      "instructorId": 12,
+      "students": [4, 8, 2],
+      "assignments": [
+        {
+          "id": 318,
+          "title": "Network Topology Design",
+          "dueDate": "2024-05-15",
+          "submitted": true,
+          "grade": 89
+        }
+      ]
+    },
+    {
+      "id": 219,
+      "courseId": 119,
+      "name": "Software Engineering - Batch 2024",
+      "instructorId": 13,
+      "students": [5, 9, 3],
+      "assignments": [
+        {
+          "id": 319,
+          "title": "SDLC Documentation",
+          "dueDate": "2024-05-20",
+          "submitted": false,
+          "grade": null
+        }
+      ]
+    },
+    {
+      "id": 220,
+      "courseId": 120,
+      "name": "Blockchain Development - Batch 2024",
+      "instructorId": 14,
+      "students": [6, 10, 4],
+      "assignments": [
+        {
+          "id": 320,
+          "title": "Smart Contract Project",
+          "dueDate": "2024-05-25",
+          "submitted": true,
+          "grade": 94
+        }
+      ]
+    }
+  ]
+}

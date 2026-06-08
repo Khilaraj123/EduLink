@@ -1,0 +1,204 @@
+{
+  "questions": [
+    {
+      "id": 401,
+      "courseId": 101,
+      "userId": 1,
+      "userName": "John Student",
+      "title": "How to center a div?",
+      "content": "I'm struggling with CSS centering techniques...",
+      "date": "2024-01-20",
+      "answers": [501]
+    },
+    {
+      "id": 402,
+      "courseId": 102,
+      "userId": 2,
+      "userName": "Emma Wilson",
+      "title": "What is a Python list comprehension?",
+      "content": "Can someone explain list comprehensions with examples?",
+      "date": "2024-01-22",
+      "answers": [502]
+    },
+    {
+      "id": 403,
+      "courseId": 103,
+      "userId": 3,
+      "userName": "Michael Brown",
+      "title": "Difference between ArrayList and LinkedList?",
+      "content": "When should I use ArrayList instead of LinkedList in Java?",
+      "date": "2024-01-25",
+      "answers": [503]
+    },
+    {
+      "id": 404,
+      "courseId": 104,
+      "userId": 4,
+      "userName": "Sophia Davis",
+      "title": "What is Dependency Injection?",
+      "content": "I keep hearing about DI in .NET. What problem does it solve?",
+      "date": "2024-01-28",
+      "answers": [504]
+    },
+    {
+      "id": 405,
+      "courseId": 105,
+      "userId": 5,
+      "userName": "William Johnson",
+      "title": "How do binary trees work?",
+      "content": "Can someone explain binary trees in a simple way?",
+      "date": "2024-02-01",
+      "answers": [505]
+    },
+    {
+      "id": 406,
+      "courseId": 106,
+      "userId": 6,
+      "userName": "Olivia Martinez",
+      "title": "What is overfitting in Machine Learning?",
+      "content": "My model performs well on training data but poorly on test data.",
+      "date": "2024-02-03",
+      "answers": [506]
+    },
+    {
+      "id": 407,
+      "courseId": 107,
+      "userId": 7,
+      "userName": "James Anderson",
+      "title": "What makes a good UI design?",
+      "content": "Looking for UI design principles and best practices.",
+      "date": "2024-02-05",
+      "answers": [507]
+    },
+    {
+      "id": 408,
+      "courseId": 108,
+      "userId": 8,
+      "userName": "Ava Taylor",
+      "title": "Stateful vs Stateless widgets?",
+      "content": "What's the difference in Flutter?",
+      "date": "2024-02-08",
+      "answers": [508]
+    },
+    {
+      "id": 409,
+      "courseId": 109,
+      "userId": 9,
+      "userName": "Benjamin Moore",
+      "title": "What is SQL Injection?",
+      "content": "How can developers prevent SQL injection attacks?",
+      "date": "2024-02-10",
+      "answers": [509]
+    },
+    {
+      "id": 410,
+      "courseId": 110,
+      "userId": 10,
+      "userName": "Mia Clark",
+      "title": "Difference between EC2 and Lambda?",
+      "content": "When should I choose Lambda over EC2?",
+      "date": "2024-02-12",
+      "answers": [510]
+    },
+    {
+      "id": 411,
+      "courseId": 111,
+      "userId": 1,
+      "userName": "John Student",
+      "title": "What is normalization?",
+      "content": "Can someone explain database normalization with examples?",
+      "date": "2024-02-15",
+      "answers": [511]
+    },
+    {
+      "id": 412,
+      "courseId": 112,
+      "userId": 2,
+      "userName": "Emma Wilson",
+      "title": "What is Docker used for?",
+      "content": "I'm new to DevOps and want to understand Docker.",
+      "date": "2024-02-18",
+      "answers": [512]
+    },
+    {
+      "id": 413,
+      "courseId": 113,
+      "userId": 3,
+      "userName": "Michael Brown",
+      "title": "Difference between AI and ML?",
+      "content": "Are AI and Machine Learning the same thing?",
+      "date": "2024-02-20",
+      "answers": [513]
+    },
+    {
+      "id": 414,
+      "courseId": 114,
+      "userId": 4,
+      "userName": "Sophia Davis",
+      "title": "What are JavaScript closures?",
+      "content": "Closures seem confusing. Can someone explain?",
+      "date": "2024-02-22",
+      "answers": [514]
+    },
+    {
+      "id": 415,
+      "courseId": 115,
+      "userId": 5,
+      "userName": "William Johnson",
+      "title": "How do React Hooks work?",
+      "content": "I'm having trouble understanding useState and useEffect.",
+      "date": "2024-02-24",
+      "answers": [515]
+    },
+    {
+      "id": 416,
+      "courseId": 116,
+      "userId": 6,
+      "userName": "Olivia Martinez",
+      "title": "What is middleware in Express?",
+      "content": "Can someone provide practical examples?",
+      "date": "2024-02-26",
+      "answers": [516]
+    },
+    {
+      "id": 417,
+      "courseId": 117,
+      "userId": 7,
+      "userName": "James Anderson",
+      "title": "How do Git branches work?",
+      "content": "I'm confused about merging and rebasing.",
+      "date": "2024-02-28",
+      "answers": [517]
+    },
+    {
+      "id": 418,
+      "courseId": 118,
+      "userId": 8,
+      "userName": "Ava Taylor",
+      "title": "What is the OSI model?",
+      "content": "Need a simple explanation of all OSI layers.",
+      "date": "2024-03-01",
+      "answers": [518]
+    },
+    {
+      "id": 419,
+      "courseId": 119,
+      "userId": 9,
+      "userName": "Benjamin Moore",
+      "title": "What is Agile methodology?",
+      "content": "How is Agile different from Waterfall?",
+      "date": "2024-03-03",
+      "answers": [519]
+    },
+    {
+      "id": 420,
+      "courseId": 120,
+      "userId": 10,
+      "userName": "Mia Clark",
+      "title": "What is a Smart Contract?",
+      "content": "How do smart contracts work on blockchain platforms?",
+      "date": "2024-03-05",
+      "answers": [520]
+    }
+  ]
+}

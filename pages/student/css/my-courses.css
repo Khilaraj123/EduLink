@@ -1,0 +1,132 @@
+.sidebar {
+  min-height: calc(100vh - 56px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.course-card {
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.course-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.progress {
+  height: 8px;
+}
+
+.progress-bar {
+  transition: width 0.5s ease;
+}
+
+.badge-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.stats-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: transform 0.3s;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+}
+
+.stats-card i {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.stats-number {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
+.nav-tabs .nav-link {
+  color: #495057;
+  font-weight: 500;
+}
+
+.nav-tabs .nav-link.active {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.assignment-item {
+  background: #f8f9fa;
+  border-left: 4px solid #007bff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.assignment-status {
+  font-size: 0.85rem;
+}
+
+.btn-continue {
+  width: 100%;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.empty-state i {
+  font-size: 4rem;
+  color: #dee2e6;
+  margin-bottom: 20px;
+}
+
+.filter-section {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.toast-container {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 1050;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.course-card {
+  animation: fadeIn 0.5s ease;
+}

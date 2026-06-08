@@ -1,0 +1,204 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "John Student",
+      "email": "john.student@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/men/1.jpg",
+      "enrolledCourses": [101, 102],
+      "joinDate": "2024-01-15"
+    },
+    {
+      "id": 2,
+      "name": "Emma Wilson",
+      "email": "emma.wilson@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/women/2.jpg",
+      "enrolledCourses": [101, 103],
+      "joinDate": "2024-02-10"
+    },
+    {
+      "id": 3,
+      "name": "Michael Brown",
+      "email": "michael.brown@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/men/3.jpg",
+      "enrolledCourses": [102, 104],
+      "joinDate": "2024-02-22"
+    },
+    {
+      "id": 4,
+      "name": "Sophia Davis",
+      "email": "sophia.davis@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/women/4.jpg",
+      "enrolledCourses": [101],
+      "joinDate": "2024-03-05"
+    },
+    {
+      "id": 5,
+      "name": "William Johnson",
+      "email": "william.johnson@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/men/5.jpg",
+      "enrolledCourses": [103, 104],
+      "joinDate": "2024-03-15"
+    },
+    {
+      "id": 6,
+      "name": "Olivia Martinez",
+      "email": "olivia.martinez@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/women/6.jpg",
+      "enrolledCourses": [102],
+      "joinDate": "2024-03-25"
+    },
+    {
+      "id": 7,
+      "name": "James Anderson",
+      "email": "james.anderson@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/men/7.jpg",
+      "enrolledCourses": [101, 104],
+      "joinDate": "2024-04-01"
+    },
+    {
+      "id": 8,
+      "name": "Ava Taylor",
+      "email": "ava.taylor@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/women/8.jpg",
+      "enrolledCourses": [103],
+      "joinDate": "2024-04-12"
+    },
+    {
+      "id": 9,
+      "name": "Benjamin Moore",
+      "email": "benjamin.moore@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/men/9.jpg",
+      "enrolledCourses": [101, 102, 103],
+      "joinDate": "2024-04-20"
+    },
+    {
+      "id": 10,
+      "name": "Mia Clark",
+      "email": "mia.clark@example.com",
+      "password": "student123",
+      "role": "student",
+      "avatar": "https://randomuser.me/api/portraits/women/10.jpg",
+      "enrolledCourses": [104],
+      "joinDate": "2024-05-02"
+    },
+    {
+      "id": 11,
+      "name": "Prof. Sarah Smith",
+      "email": "sarah.smith@example.com",
+      "password": "instructor123",
+      "role": "instructor",
+      "avatar": "https://randomuser.me/api/portraits/women/11.jpg",
+      "courses": [101, 103],
+      "totalStudents": 245,
+      "joinDate": "2023-06-10"
+    },
+    {
+      "id": 12,
+      "name": "Prof. David Wilson",
+      "email": "david.wilson@example.com",
+      "password": "instructor123",
+      "role": "instructor",
+      "avatar": "https://randomuser.me/api/portraits/men/12.jpg",
+      "courses": [102],
+      "totalStudents": 180,
+      "joinDate": "2023-07-15"
+    },
+    {
+      "id": 13,
+      "name": "Prof. Linda White",
+      "email": "linda.white@example.com",
+      "password": "instructor123",
+      "role": "instructor",
+      "avatar": "https://randomuser.me/api/portraits/women/13.jpg",
+      "courses": [104],
+      "totalStudents": 132,
+      "joinDate": "2023-08-20"
+    },
+    {
+      "id": 14,
+      "name": "Prof. Robert Miller",
+      "email": "robert.miller@example.com",
+      "password": "instructor123",
+      "role": "instructor",
+      "avatar": "https://randomuser.me/api/portraits/men/14.jpg",
+      "courses": [105, 106],
+      "totalStudents": 310,
+      "joinDate": "2023-09-01"
+    },
+    {
+      "id": 15,
+      "name": "Prof. Jennifer Lee",
+      "email": "jennifer.lee@example.com",
+      "password": "instructor123",
+      "role": "instructor",
+      "avatar": "https://randomuser.me/api/portraits/women/15.jpg",
+      "courses": [107],
+      "totalStudents": 98,
+      "joinDate": "2023-10-12"
+    },
+    {
+      "id": 16,
+      "name": "Admin User",
+      "email": "admin@example.com",
+      "password": "admin123",
+      "role": "admin",
+      "avatar": "https://randomuser.me/api/portraits/men/16.jpg",
+      "joinDate": "2023-01-01"
+    },
+    {
+      "id": 17,
+      "name": "System Admin",
+      "email": "sysadmin@example.com",
+      "password": "admin123",
+      "role": "admin",
+      "avatar": "https://randomuser.me/api/portraits/women/17.jpg",
+      "joinDate": "2023-02-14"
+    },
+    {
+      "id": 18,
+      "name": "Super Admin",
+      "email": "superadmin@example.com",
+      "password": "admin123",
+      "role": "admin",
+      "avatar": "https://randomuser.me/api/portraits/men/18.jpg",
+      "joinDate": "2023-03-20"
+    },
+    {
+      "id": 19,
+      "name": "Course Manager",
+      "email": "manager@example.com",
+      "password": "admin123",
+      "role": "admin",
+      "avatar": "https://randomuser.me/api/portraits/women/19.jpg",
+      "joinDate": "2023-04-05"
+    },
+    {
+      "id": 20,
+      "name": "Platform Admin",
+      "email": "platform.admin@example.com",
+      "password": "admin123",
+      "role": "admin",
+      "avatar": "https://randomuser.me/api/portraits/men/20.jpg",
+      "joinDate": "2023-05-10"
+    }
+  ]
+}

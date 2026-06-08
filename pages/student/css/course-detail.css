@@ -1,0 +1,172 @@
+.sidebar {
+  min-height: calc(100vh - 56px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.course-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 40px 0;
+  margin-bottom: 30px;
+  border-radius: 0 0 20px 20px;
+}
+
+.course-image-large {
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.enroll-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 20px;
+}
+
+.price-large {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #28a745;
+}
+
+.curriculum-item {
+  background: #f8f9fa;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.curriculum-item:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.curriculum-item.completed {
+  background: #d4edda;
+  border-left: 4px solid #28a745;
+}
+
+.curriculum-item.current {
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+}
+
+.lesson-icon {
+  width: 30px;
+  display: inline-block;
+}
+
+.review-item {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rating-stars {
+  color: #ffc107;
+}
+
+.progress-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(#28a745 0deg, #e9ecef 0deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.progress-inner {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.video-placeholder {
+  background: #000;
+  color: white;
+  text-align: center;
+  padding: 100px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.video-placeholder:hover {
+  opacity: 0.9;
+}
+
+.toast-container {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 1050;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-close-white {
+  filter: brightness(0) invert(1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.course-content {
+  animation: fadeIn 0.5s ease;
+}
+
+.badge-certified {
+  background: #28a745;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.feature-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.feature-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.feature-list li:last-child {
+  border-bottom: none;
+}
+
+.feature-list i {
+  color: #28a745;
+  margin-right: 10px;
+}
