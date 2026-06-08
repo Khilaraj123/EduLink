@@ -1,0 +1,151 @@
+.sidebar {
+  min-height: calc(100vh - 56px);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.stat-trend {
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.trend-up {
+  color: #28a745;
+}
+
+.trend-down {
+  color: #dc3545;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border-left: 4px solid #007bff;
+  padding-left: 10px;
+}
+
+.table-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.table-responsive {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.badge-status {
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+}
+
+.badge-active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-inactive {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.performance-indicator {
+  width: 100%;
+  height: 8px;
+  background: #e9ecef;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.performance-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #28a745, #007bff);
+  transition: width 0.5s;
+}
+
+.toast-container {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  z-index: 1050;
+}
+
+.date-range-selector {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chart-card,
+.stat-card {
+  animation: fadeIn 0.5s ease;
+}
+
+.export-btn {
+  float: right;
+  margin-top: -40px;
+}
+
+@media (max-width: 768px) {
+  .export-btn {
+    float: none;
+    margin-top: 10px;
+  }
+}
