@@ -1,6 +1,5 @@
 let currentUser = null;
-let allCourses = [];
-let allInstructors = [];
+let myCourses = [];
 let filteredCourses = [];
 let currentPage = 1;
 let itemsPerPage = 6;
@@ -21,45 +20,39 @@ function checkAuth() {
     return null;
   }
   currentUser = JSON.parse(user);
-  if (currentUser.role !== "admin") {
+  if (currentUser.role !== "instructor") {
     window.location.href = `../../pages/${currentUser.role}/dashboard.html`;
     return null;
   }
   return currentUser;
 }
 
-// Load all data
-async function loadData() {
+// Load courses
+async function loadCourses() {
   try {
-    // Load courses
-    const coursesResponse = await fetch("../../data/courses.json");
-    const coursesData = await coursesResponse.json();
-    allCourses = coursesData.courses;
-
-    // Load users to get instructors
-    const usersResponse = await fetch("../../data/users.json");
-    const usersData = await usersResponse.json();
-    allInstructors = usersData.users.filter((u) => u.role === "instructor");
+    const response = await fetch("../../assets/data/courses.json");
+    const data = await response.json();
+    myCourses = data.courses.filter((c) => c.instructorId === currentUser.id);
 
     // Load saved courses from localStorage
     loadSavedCourses();
 
+    updateStats();
     filterAndRender();
-    populateInstructors();
   } catch (error) {
-    console.error("Error loading data:", error);
-    showToast("Error", "Failed to load data", "danger");
+    console.error("Error loading courses:", error);
+    showToast("Error", "Failed to load courses", "danger");
   }
 }
 
 // Load saved courses from localStorage
 function loadSavedCourses() {
-  const saved = localStorage.getItem("admin_courses");
+  const saved = localStorage.getItem(`instructor_courses_${currentUser.id}`);
   if (saved) {
     const savedCourses = JSON.parse(saved);
     savedCourses.forEach((savedCourse) => {
-      if (!allCourses.find((c) => c.id === savedCourse.id)) {
-        allCourses.push(savedCourse);
+      if (!myCourses.find((c) => c.id === savedCourse.id)) {
+        myCourses.push(savedCourse);
       }
     });
   }
@@ -67,16 +60,24 @@ function loadSavedCourses() {
 
 // Save courses to localStorage
 function saveCourses() {
-  localStorage.setItem("admin_courses", JSON.stringify(allCourses));
+  localStorage.setItem(
+    `instructor_courses_${currentUser.id}`,
+    JSON.stringify(myCourses),
+  );
 }
 
-// Populate instructors dropdown
-function populateInstructors() {
-  let options = '<option value="">Select Instructor</option>';
-  allInstructors.forEach((instructor) => {
-    options += `<option value="${instructor.id}">${instructor.name} (${instructor.email})</option>`;
+// Update statistics
+function updateStats() {
+  $("#totalCourses").text(myCourses.length);
+
+  let totalStudents = 0;
+  let totalRevenue = 0;
+  myCourses.forEach((course) => {
+    totalStudents += course.students || 0;
+    totalRevenue += course.price * (course.students || 0);
   });
-  $("#courseInstructor").html(options);
+  $("#totalStudents").text(totalStudents);
+  $("#totalRevenue").text("$" + totalRevenue.toLocaleString());
 }
 
 // Filter and render courses
@@ -85,14 +86,13 @@ function filterAndRender() {
   const levelFilter = $("#levelFilter").val();
   const sortBy = $("#sortBy").val();
 
-  filteredCourses = [...allCourses];
+  filteredCourses = [...myCourses];
 
   // Apply search filter
   if (searchTerm) {
     filteredCourses = filteredCourses.filter(
       (course) =>
         course.title.toLowerCase().includes(searchTerm) ||
-        course.instructorName.toLowerCase().includes(searchTerm) ||
         course.description.toLowerCase().includes(searchTerm),
     );
   }
@@ -110,27 +110,18 @@ function filterAndRender() {
       filteredCourses.sort((a, b) => a.title.localeCompare(b.title));
       break;
     case "students":
-      filteredCourses.sort((a, b) => b.students - a.students);
+      filteredCourses.sort((a, b) => (b.students || 0) - (a.students || 0));
       break;
-    case "price_asc":
-      filteredCourses.sort((a, b) => a.price - b.price);
-      break;
-    case "price_desc":
-      filteredCourses.sort((a, b) => b.price - a.price);
-      break;
-    case "rating":
-      filteredCourses.sort((a, b) => b.rating - a.rating);
+    case "revenue":
+      filteredCourses.sort(
+        (a, b) => b.price * (b.students || 0) - a.price * (a.students || 0),
+      );
       break;
   }
 
-  updateTotalCount();
+  currentPage = 1;
   renderCourses();
   renderPagination();
-}
-
-// Update total count
-function updateTotalCount() {
-  $("#totalCoursesCount").text(filteredCourses.length);
 }
 
 // Render courses
@@ -145,7 +136,7 @@ function renderCourses() {
                         <i class="fas fa-book"></i>
                         <h4>No Courses Found</h4>
                         <p>Create your first course to get started!</p>
-                        <button class="btn btn-primary" onclick="showCreateModal()">
+                        <button class="btn btn-success" onclick="showCreateModal()">
                             <i class="fas fa-plus"></i> Create Course
                         </button>
                     </div>
@@ -155,6 +146,8 @@ function renderCourses() {
 
   let html = '<div class="row">';
   pageCourses.forEach((course) => {
+    const revenue = (course.price * (course.students || 0)).toLocaleString();
+
     html += `
                     <div class="col-md-6 col-lg-4">
                         <div class="course-card">
@@ -164,16 +157,13 @@ function renderCourses() {
                             </div>
                             <div class="course-body">
                                 <h5 class="course-title">${escapeHtml(course.title)}</h5>
-                                <div class="course-instructor">
-                                    <i class="fas fa-user"></i> ${course.instructorName}
-                                </div>
                                 <div class="rating-stars mb-2">
-                                    ${generateStars(course.rating)}
-                                    <span class="text-muted">(${course.rating})</span>
+                                    ${generateStars(course.rating || 0)}
+                                    <span class="text-muted">(${course.rating || 0})</span>
                                 </div>
                                 <div class="course-stats">
                                     <div class="stat">
-                                        <div class="stat-value">${course.students}</div>
+                                        <div class="stat-value">${course.students || 0}</div>
                                         <small>Students</small>
                                     </div>
                                     <div class="stat">
@@ -182,7 +172,11 @@ function renderCourses() {
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mt-2">
-                                    <span class="course-price">$${course.price}</span>
+                                    <div>
+                                        <span class="course-price">$${course.price}</span>
+                                        <br>
+                                        <small class="text-muted">Revenue: $${revenue}</small>
+                                    </div>
                                     <div class="action-buttons">
                                         <button class="btn btn-sm btn-outline-primary" onclick="editCourse(${course.id})">
                                             <i class="fas fa-edit"></i>
@@ -192,6 +186,9 @@ function renderCourses() {
                                         </button>
                                     </div>
                                 </div>
+                                <button class="btn btn-sm btn-success w-100 mt-2" onclick="viewCourseDetails(${course.id})">
+                                    <i class="fas fa-eye"></i> View Details
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -205,18 +202,8 @@ function renderCourses() {
 // Generate star rating
 function generateStars(rating) {
   let stars = "";
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-
-  for (let i = 0; i < fullStars; i++) {
-    stars += '<i class="fas fa-star"></i>';
-  }
-  if (hasHalfStar) {
-    stars += '<i class="fas fa-star-half-alt"></i>';
-  }
-  const emptyStars = 5 - Math.ceil(rating);
-  for (let i = 0; i < emptyStars; i++) {
-    stars += '<i class="far fa-star"></i>';
+  for (let i = 1; i <= 5; i++) {
+    stars += `<i class="fas fa-star${i <= rating ? "" : "-o"}"></i>`;
   }
   return stars;
 }
@@ -252,6 +239,11 @@ function renderPagination() {
     html += `<li class="page-item ${currentPage === i ? "active" : ""}">
                             <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
                          </li>`;
+  }
+
+  if (totalPages > 5) {
+    html += `<li class="page-item disabled"><a class="page-link">...</a></li>`;
+    html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${totalPages})">${totalPages}</a></li>`;
   }
 
   html += `<li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
@@ -290,18 +282,13 @@ function showCreateModal() {
 
 // Edit course
 function editCourse(id) {
-  const course = allCourses.find((c) => c.id === id);
+  const course = myCourses.find((c) => c.id === id);
   if (course) {
     $("#modalTitle").text("Edit Course");
 
-    // Add hidden ID field
     if ($("#courseId").length === 0) {
       $("<input>")
-        .attr({
-          type: "hidden",
-          id: "courseId",
-          value: course.id,
-        })
+        .attr({ type: "hidden", id: "courseId", value: course.id })
         .appendTo("#courseForm");
     } else {
       $("#courseId").val(course.id);
@@ -309,7 +296,6 @@ function editCourse(id) {
 
     $("#courseTitle").val(course.title);
     $("#courseDescription").val(course.description);
-    $("#courseInstructor").val(course.instructorId);
     $("#courseLevel").val(course.level);
     $("#coursePrice").val(course.price);
     $("#courseDuration").val(course.duration);
@@ -375,31 +361,27 @@ function removeLesson(index) {
 function saveCourse() {
   const title = $("#courseTitle").val();
   const description = $("#courseDescription").val();
-  const instructorId = parseInt($("#courseInstructor").val());
   const level = $("#courseLevel").val();
   const price = parseFloat($("#coursePrice").val());
   const duration = $("#courseDuration").val();
   const image =
     $("#courseImage").val() || "https://picsum.photos/id/100/300/200";
 
-  if (!title || !description || !instructorId || !price || !duration) {
+  if (!title || !description || !price || !duration) {
     showToast("Error", "Please fill all required fields", "danger");
     return;
   }
 
-  const instructor = allInstructors.find((i) => i.id === instructorId);
   const courseId = $("#courseId").val();
 
   if (courseId) {
     // Update existing course
-    const index = allCourses.findIndex((c) => c.id === parseInt(courseId));
+    const index = myCourses.findIndex((c) => c.id === parseInt(courseId));
     if (index !== -1) {
-      allCourses[index] = {
-        ...allCourses[index],
+      myCourses[index] = {
+        ...myCourses[index],
         title,
         description,
-        instructorId,
-        instructorName: instructor.name,
         level,
         price,
         duration,
@@ -415,8 +397,8 @@ function saveCourse() {
       id: Date.now(),
       title,
       description,
-      instructorId,
-      instructorName: instructor.name,
+      instructorId: currentUser.id,
+      instructorName: currentUser.name,
       level,
       price,
       duration,
@@ -424,16 +406,21 @@ function saveCourse() {
       curriculum: lessons,
       students: 0,
       rating: 0,
-      enrolled: false,
       createdDate: new Date().toISOString(),
     };
-    allCourses.push(newCourse);
+    myCourses.push(newCourse);
     showToast("Success", "Course created successfully!", "success");
   }
 
   saveCourses();
+  updateStats();
   filterAndRender();
   $("#courseModal").modal("hide");
+}
+
+// View course details
+function viewCourseDetails(id) {
+  window.location.href = `course-detail.html?id=${id}`;
 }
 
 // Show delete modal
@@ -444,8 +431,9 @@ function showDeleteModal(id) {
 
 // Confirm delete
 function confirmDelete() {
-  allCourses = allCourses.filter((c) => c.id !== deleteId);
+  myCourses = myCourses.filter((c) => c.id !== deleteId);
   saveCourses();
+  updateStats();
   filterAndRender();
   $("#deleteModal").modal("hide");
   showToast("Deleted", "Course has been deleted", "success");
@@ -476,7 +464,6 @@ function showToast(title, message, type = "success") {
   $(".toast-container").append(toastHtml);
   const toast = new bootstrap.Toast($(".toast").last()[0]);
   toast.show();
-
   $(".toast")
     .last()[0]
     .addEventListener("hidden.bs.toast", function () {
@@ -484,11 +471,11 @@ function showToast(title, message, type = "success") {
     });
 }
 
-// Load admin profile
-function loadAdminProfile() {
+// Load instructor profile
+function loadInstructorProfile() {
   if (currentUser) {
-    $("#adminWelcome").html(
-      `<i class="fas fa-user-shield"></i> ${currentUser.name}`,
+    $("#instructorWelcome").html(
+      `<i class="fas fa-chalkboard-teacher"></i> Welcome, ${currentUser.name.split(" ")[0]}`,
     );
   }
 }
@@ -502,16 +489,14 @@ function logout() {
 // Event listeners
 $(document).ready(function () {
   checkAuth();
-  loadAdminProfile();
-  loadData();
+  loadInstructorProfile();
+  loadCourses();
 
   $("#searchCourse").on("input", function () {
-    currentPage = 1;
     filterAndRender();
   });
 
   $("#levelFilter, #sortBy").on("change", function () {
-    currentPage = 1;
     filterAndRender();
   });
 

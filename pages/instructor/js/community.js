@@ -27,7 +27,7 @@ async function loadPosts() {
       allPosts = JSON.parse(savedPosts);
     } else {
       // Load from JSON and add instructor posts
-      const response = await fetch("../../assets/data/questions.json");
+      const response = await fetch("../../data/questions.json");
       const data = await response.json();
 
       allPosts = data.questions.map((q) => ({

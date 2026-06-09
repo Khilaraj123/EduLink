@@ -36,7 +36,7 @@ async function loadClassroomData() {
 
   try {
     // Load classrooms
-    const classroomsResponse = await fetch("../../assets/data/classrooms.json");
+    const classroomsResponse = await fetch("../../data/classrooms.json");
     const classroomsData = await classroomsResponse.json();
     classroomData = classroomsData.classrooms.find((c) => c.id === classroomId);
 
@@ -47,14 +47,14 @@ async function loadClassroomData() {
     }
 
     // Load courses
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     currentCourse = coursesData.courses.find(
       (c) => c.id === classroomData.courseId,
     );
 
     // Load users to get instructor and student info
-    const usersResponse = await fetch("../../assets/data/users.json");
+    const usersResponse = await fetch("../../data/users.json");
     const usersData = await usersResponse.json();
     currentInstructor = usersData.users.find(
       (u) => u.id === classroomData.instructorId,

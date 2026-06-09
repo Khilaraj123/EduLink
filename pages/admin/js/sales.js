@@ -24,11 +24,11 @@ function checkAuth() {
 // Generate sample transactions
 async function generateTransactions() {
   try {
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     allCourses = coursesData.courses;
 
-    const usersResponse = await fetch("../../assets/data/users.json");
+    const usersResponse = await fetch("../../data/users.json");
     const usersData = await usersResponse.json();
     const students = usersData.users.filter((u) => u.role === "student");
 

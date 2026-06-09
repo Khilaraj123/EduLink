@@ -22,12 +22,12 @@ function checkAuth() {
 async function loadData() {
   try {
     // Load users
-    const usersResponse = await fetch("../../assets/data/users.json");
+    const usersResponse = await fetch("../../data/users.json");
     const usersData = await usersResponse.json();
     allUsers = usersData.users;
 
     // Load courses
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     allCourses = coursesData.courses;
 

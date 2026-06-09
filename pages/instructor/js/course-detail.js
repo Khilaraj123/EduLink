@@ -1,6 +1,6 @@
 let currentUser = null;
 let currentCourse = null;
-let allStudents = [];
+let enrolledStudents = [];
 let courseReviews = [];
 
 // Check authentication
@@ -11,7 +11,7 @@ function checkAuth() {
     return null;
   }
   currentUser = JSON.parse(user);
-  if (currentUser.role !== "admin") {
+  if (currentUser.role !== "instructor") {
     window.location.href = `../../pages/${currentUser.role}/dashboard.html`;
     return null;
   }
@@ -28,32 +28,43 @@ function getCourseId() {
 async function loadCourseData() {
   const courseId = getCourseId();
   if (!courseId) {
-    window.location.href = "courses.html";
+    window.location.href = "my-courses.html";
     return;
   }
 
   try {
     // Load courses
-    const coursesResponse = await fetch("../../data/courses.json");
+    const coursesResponse = await fetch("../../assets/data/courses.json");
     const coursesData = await coursesResponse.json();
-    currentCourse = coursesData.courses.find((c) => c.id === courseId);
+    currentCourse = coursesData.courses.find(
+      (c) => c.id === courseId && c.instructorId === currentUser.id,
+    );
 
     if (!currentCourse) {
-      showToast("Error", "Course not found", "danger");
-      setTimeout(() => (window.location.href = "courses.html"), 2000);
+      showToast(
+        "Error",
+        "Course not found or you do not have permission",
+        "danger",
+      );
+      setTimeout(() => (window.location.href = "my-courses.html"), 2000);
       return;
     }
 
-    // Load users
-    const usersResponse = await fetch("../../data/users.json");
+    // Load users for student info
+    const usersResponse = await fetch("../../assets/data/users.json");
     const usersData = await usersResponse.json();
-    allStudents = usersData.users.filter((u) => u.role === "student");
+
+    // Simulate enrolled students
+    const allStudents = usersData.users.filter((u) => u.role === "student");
+    enrolledStudents = allStudents.slice(
+      0,
+      Math.min(currentCourse.students || 5, allStudents.length),
+    );
 
     // Load reviews from localStorage
     loadReviews();
 
     renderCourseDetails();
-    loadEnrolledStudents();
     calculateMetrics();
   } catch (error) {
     console.error("Error loading course data:", error);
@@ -67,7 +78,6 @@ function loadReviews() {
   if (savedReviews) {
     courseReviews = JSON.parse(savedReviews);
   } else {
-    // Generate sample reviews
     courseReviews = [
       {
         id: 1,
@@ -111,21 +121,26 @@ function renderCourseDetails() {
   $("#courseLevel").html(
     `<i class="fas fa-signal"></i> ${currentCourse.level}`,
   );
-  $("#instructorName").text(currentCourse.instructorName);
   $("#courseDuration").text(currentCourse.duration);
   $("#coursePrice").text(`$${currentCourse.price}`);
   $("#courseIdDisplay").text(currentCourse.id);
-  $("#instructorEmail").text(
-    `${currentCourse.instructorName.toLowerCase().replace(" ", ".")}@edulink.com`,
-  );
   $("#createdDate").text(currentCourse.createdDate || "2024-01-15");
   $("#updatedDate").text(currentCourse.updatedDate || "2024-02-01");
   $("#totalStudents").text(currentCourse.students || 0);
   $("#courseRating").text(currentCourse.rating || 4.5);
   $("#totalLessons").text(currentCourse.curriculum?.length || 0);
 
+  // Calculate earnings
+  const earnings = (
+    currentCourse.price * (currentCourse.students || 0)
+  ).toLocaleString();
+  $("#totalEarnings").text("$" + earnings);
+
   // Render curriculum
   renderCurriculum();
+
+  // Render enrolled students
+  renderStudents();
 
   // Render reviews
   renderReviews();
@@ -146,7 +161,7 @@ function renderCurriculum() {
     html += `
                     <div class="curriculum-item">
                         <div>
-                            <i class="fas fa-play-circle text-primary me-2"></i>
+                            <i class="fas fa-play-circle text-success me-2"></i>
                             <strong>Lesson ${index + 1}:</strong> ${escapeHtml(lesson)}
                         </div>
                         <div>
@@ -159,43 +174,37 @@ function renderCurriculum() {
   $("#curriculumList").html(html);
 }
 
-// Load enrolled students
-function loadEnrolledStudents() {
-  // Simulate enrolled students
-  const enrolledStudents = allStudents.slice(
-    0,
-    Math.floor(Math.random() * allStudents.length),
-  );
-
+// Render enrolled students
+function renderStudents() {
   if (enrolledStudents.length === 0) {
     $("#studentsList").html(
-      '<tr><td colspan="3" class="text-center">No enrolled students</td></tr>',
+      '<p class="text-muted text-center">No students enrolled yet</p>',
     );
     return;
   }
 
   let html = "";
-  enrolledStudents.forEach((student, index) => {
+  enrolledStudents.forEach((student) => {
     const progress = Math.floor(Math.random() * 100);
     html += `
-                    <tr>
-                        <td>
+                    <div class="student-item">
+                        <div class="d-flex align-items-center">
                             <img src="${student.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
                                  class="student-avatar" alt="${student.name}">
-                            ${student.name}
-                        </td>
-                        <td>
-                            <div class="progress" style="width: 100px;">
-                                <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                            <div>
+                                <strong>${student.name}</strong>
+                                <br>
+                                <small class="text-muted">${student.email}</small>
+                                <div class="progress mt-1" style="width: 100px;">
+                                    <div class="progress-bar bg-success" style="width: ${progress}%"></div>
+                                </div>
+                                <small>${progress}% complete</small>
                             </div>
-                            <small>${progress}%</small>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-danger" onclick="removeStudent(${student.id})">
-                                <i class="fas fa-user-minus"></i>
-                            </button>
-                        </td>
-                    </tr>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeStudent(${student.id})">
+                            <i class="fas fa-user-minus"></i>
+                        </button>
+                    </div>
                 `;
   });
   $("#studentsList").html(html);
@@ -256,10 +265,17 @@ function generateStarRating(rating) {
 
 // Calculate performance metrics
 function calculateMetrics() {
-  // Simulated metrics
-  const completionRate = Math.floor(Math.random() * 40) + 50;
-  const avgGrade = Math.floor(Math.random() * 30) + 60;
-  const satisfaction = Math.floor(Math.random() * 20) + 75;
+  // Simulated metrics based on students
+  const completionRate =
+    enrolledStudents.length > 0 ? Math.floor(Math.random() * 40) + 50 : 0;
+  const avgGrade =
+    enrolledStudents.length > 0 ? Math.floor(Math.random() * 30) + 60 : 0;
+  const satisfaction =
+    courseReviews.length > 0
+      ? (courseReviews.reduce((sum, r) => sum + r.rating, 0) /
+          courseReviews.length) *
+        20
+      : 75;
 
   $("#completionRate").css("width", `${completionRate}%`);
   $("#completionRateText").text(`${completionRate}%`);
@@ -289,11 +305,16 @@ function saveCourseEdit() {
   currentCourse.updatedDate = new Date().toISOString();
 
   // Update in localStorage
-  const allCourses = JSON.parse(localStorage.getItem("admin_courses") || "[]");
-  const index = allCourses.findIndex((c) => c.id === currentCourse.id);
+  const savedCourses = JSON.parse(
+    localStorage.getItem(`instructor_courses_${currentUser.id}`) || "[]",
+  );
+  const index = savedCourses.findIndex((c) => c.id === currentCourse.id);
   if (index !== -1) {
-    allCourses[index] = currentCourse;
-    localStorage.setItem("admin_courses", JSON.stringify(allCourses));
+    savedCourses[index] = currentCourse;
+    localStorage.setItem(
+      `instructor_courses_${currentUser.id}`,
+      JSON.stringify(savedCourses),
+    );
   }
 
   renderCourseDetails();
@@ -308,14 +329,22 @@ function deleteCourse() {
       "Are you sure you want to delete this course? This action cannot be undone!",
     )
   ) {
-    const allCourses = JSON.parse(
-      localStorage.getItem("admin_courses") || "[]",
+    const savedCourses = JSON.parse(
+      localStorage.getItem(`instructor_courses_${currentUser.id}`) || "[]",
     );
-    const filtered = allCourses.filter((c) => c.id !== currentCourse.id);
-    localStorage.setItem("admin_courses", JSON.stringify(filtered));
+    const filtered = savedCourses.filter((c) => c.id !== currentCourse.id);
+    localStorage.setItem(
+      `instructor_courses_${currentUser.id}`,
+      JSON.stringify(filtered),
+    );
     showToast("Deleted", "Course has been deleted", "success");
-    setTimeout(() => (window.location.href = "courses.html"), 1500);
+    setTimeout(() => (window.location.href = "my-courses.html"), 1500);
   }
+}
+
+// Create classroom
+function createClassroom() {
+  window.location.href = `classrooms.html?courseId=${currentCourse.id}`;
 }
 
 // Add lesson
@@ -350,26 +379,22 @@ function removeLesson(index) {
   }
 }
 
-// Add student
-function addStudent() {
-  const studentEmail = prompt("Enter student email to enroll:");
-  if (studentEmail) {
-    showToast(
-      "Success",
-      `Student ${studentEmail} has been enrolled!`,
-      "success",
-    );
-    loadEnrolledStudents();
-    $("#totalStudents").text(parseInt($("#totalStudents").text()) + 1);
+// Invite students
+function inviteStudents() {
+  const email = prompt("Enter student email to invite:");
+  if (email) {
+    showToast("Invitation Sent", `Invitation sent to ${email}`, "success");
   }
 }
 
 // Remove student
 function removeStudent(studentId) {
   if (confirm("Remove this student from the course?")) {
+    enrolledStudents = enrolledStudents.filter((s) => s.id !== studentId);
+    currentCourse.students = enrolledStudents.length;
+    renderStudents();
+    $("#totalStudents").text(currentCourse.students);
     showToast("Removed", "Student has been removed from the course", "info");
-    loadEnrolledStudents();
-    $("#totalStudents").text(parseInt($("#totalStudents").text()) - 1);
   }
 }
 
@@ -398,7 +423,6 @@ function showToast(title, message, type = "success") {
   $(".toast-container").append(toastHtml);
   const toast = new bootstrap.Toast($(".toast").last()[0]);
   toast.show();
-
   $(".toast")
     .last()[0]
     .addEventListener("hidden.bs.toast", function () {
@@ -406,11 +430,11 @@ function showToast(title, message, type = "success") {
     });
 }
 
-// Load admin profile
-function loadAdminProfile() {
+// Load instructor profile
+function loadInstructorProfile() {
   if (currentUser) {
-    $("#adminWelcome").html(
-      `<i class="fas fa-user-shield"></i> ${currentUser.name}`,
+    $("#instructorWelcome").html(
+      `<i class="fas fa-chalkboard-teacher"></i> ${currentUser.name}`,
     );
   }
 }
@@ -424,7 +448,7 @@ function logout() {
 // Event listeners
 $(document).ready(function () {
   checkAuth();
-  loadAdminProfile();
+  loadInstructorProfile();
   loadCourseData();
 
   $("#logoutBtn").on("click", function (e) {

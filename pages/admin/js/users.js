@@ -24,7 +24,7 @@ function checkAuth() {
 // Load users
 async function loadUsers() {
   try {
-    const response = await fetch("../../assets/data/users.json");
+    const response = await fetch("../../data/users.json");
     const data = await response.json();
     allUsers = data.users;
 

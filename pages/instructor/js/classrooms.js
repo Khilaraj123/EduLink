@@ -26,21 +26,21 @@ function checkAuth() {
 async function loadData() {
   try {
     // Load courses
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     myCourses = coursesData.courses.filter(
       (c) => c.instructorId === currentUser.id,
     );
 
     // Load classrooms
-    const classroomsResponse = await fetch("../../assets/data/classrooms.json");
+    const classroomsResponse = await fetch("../../data/classrooms.json");
     const classroomsData = await classroomsResponse.json();
     myClassrooms = classroomsData.classrooms.filter(
       (c) => c.instructorId === currentUser.id,
     );
 
     // Load students
-    const usersResponse = await fetch("../../assets/data/users.json");
+    const usersResponse = await fetch("../../data/users.json");
     const usersData = await usersResponse.json();
     allStudents = usersData.users.filter((u) => u.role === "student");
 
