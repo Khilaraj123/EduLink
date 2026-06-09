@@ -30,7 +30,7 @@ function checkAuth() {
 // Load courses
 async function loadCourses() {
   try {
-    const response = await fetch("../../assets/data/courses.json");
+    const response = await fetch("../../data/courses.json");
     const data = await response.json();
     myCourses = data.courses.filter((c) => c.instructorId === currentUser.id);
 
@@ -152,8 +152,8 @@ function renderCourses() {
                     <div class="col-md-6 col-lg-4">
                         <div class="course-card">
                             <div class="position-relative">
-                                <img src="${course.image}" class="course-image" alt="${course.title}" onerror="this.src='https://picsum.photos/id/100/300/200'">
-                                <span class="badge bg-${getLevelColor(course.level)} badge-level">${course.level}</span>
+                                <img src="${escapeHtml(course.image)}" class="course-image" alt="${escapeHtml(course.title)}" onerror="this.src='https://picsum.photos/id/100/300/200'">
+                                <span class="badge bg-${getLevelColor(course.level)} badge-level">${escapeHtml(course.level)}</span>
                             </div>
                             <div class="course-body">
                                 <h5 class="course-title">${escapeHtml(course.title)}</h5>
@@ -203,7 +203,7 @@ function renderCourses() {
 function generateStars(rating) {
   let stars = "";
   for (let i = 1; i <= 5; i++) {
-    stars += `<i class="fas fa-star${i <= rating ? "" : "-o"}"></i>`;
+    stars += `<i class="${i <= rating ? "fas" : "far"} fa-star"></i>`;
   }
   return stars;
 }
@@ -461,14 +461,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile

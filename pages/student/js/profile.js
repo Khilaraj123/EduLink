@@ -109,7 +109,7 @@ function renderProfile() {
   $("#profileName").text(userProfile.name);
   $("#profileEmail").text(userProfile.email);
   $("#memberSince").text(new Date(userProfile.joinDate).toLocaleDateString());
-  $("#profileBio").html(`<i class="fas fa-quote-left"></i> ${userProfile.bio}`);
+  $("#profileBio").html(`<i class="fas fa-quote-left"></i> ${escapeHtml(userProfile.bio)}`);
 
   $("#displayName").text(userProfile.name);
   $("#displayEmail").text(userProfile.email);
@@ -122,7 +122,7 @@ function renderProfile() {
   userProfile.skills.forEach((skill) => {
     skillsHtml += `
                     <span class="skill-tag">
-                        ${skill} <i class="fas fa-times" onclick="removeSkill('${skill}')"></i>
+                        ${escapeHtml(skill)} <i class="fas fa-times" onclick="removeSkill('${escapeHtml(skill)}')"></i>
                     </span>
                 `;
   });
@@ -133,7 +133,7 @@ function renderProfile() {
   // Render goals
   let goalsHtml = '<ul class="list-unstyled">';
   userProfile.goals.forEach((goal) => {
-    goalsHtml += `<li><i class="fas fa-check-circle text-success me-2"></i> ${goal}</li>`;
+    goalsHtml += `<li><i class="fas fa-check-circle text-success me-2"></i> ${escapeHtml(goal)}</li>`;
   });
   goalsHtml += "</ul>";
   $("#goalsContainer").html(goalsHtml);
@@ -147,10 +147,10 @@ function renderProfile() {
                             <div class="achievement-icon">
                                 <i class="fas ${achievement.icon}"></i>
                             </div>
-                            <h6>${achievement.name}</h6>
-                            <small>${achievement.description}</small>
+                            <h6>${escapeHtml(achievement.name)}</h6>
+                            <small>${escapeHtml(achievement.description)}</small>
                             <div class="mt-2">
-                                <small>Earned: ${achievement.date}</small>
+                                <small>Earned: ${escapeHtml(achievement.date)}</small>
                             </div>
                         </div>
                     `;
@@ -165,7 +165,7 @@ function renderProfile() {
 // Load statistics
 async function loadStats() {
   try {
-    const response = await fetch("../../assets/data/courses.json");
+    const response = await fetch("../../data/courses.json");
     const data = await response.json();
     const enrolledCourses = currentUser.enrolledCourses || [];
     const totalCourses = enrolledCourses.length;
@@ -254,9 +254,9 @@ function loadRecentActivity() {
                                 <i class="fas ${activity.icon}"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <strong>${activity.title}</strong>
+                                <strong>${escapeHtml(activity.title)}</strong>
                                 <br>
-                                <small class="text-muted">${activity.date}</small>
+                                <small class="text-muted">${escapeHtml(activity.date)}</small>
                             </div>
                         </div>
                     </div>
@@ -293,11 +293,11 @@ function loadCertificates() {
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
                                 <i class="fas fa-certificate text-warning fa-2x me-3"></i>
-                                <strong>${cert.courseTitle}</strong>
+                                <strong>${escapeHtml(cert.courseTitle)}</strong>
                                 <br>
                                 <small class="text-muted">Completed: ${new Date(cert.completionDate).toLocaleDateString()}</small>
                             </div>
-                            <button class="btn btn-sm btn-outline-primary" onclick="downloadCertificate('${cert.certificateId}')">
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadCertificate('${escapeHtml(cert.certificateId)}')">
                                 <i class="fas fa-download"></i>
                             </button>
                         </div>
@@ -385,7 +385,7 @@ function addNewSkill() {
     saveProfile();
     renderProfile();
     updateProfileStrength();
-    showToast("Success", `Skill "${skill}" added!`, "success");
+    showToast("Success", `Skill "${escapeHtml(skill)}" added!`, "success");
     $("#newSkill").val("");
     $("#addSkillModal").modal("hide");
   } else if (userProfile.skills.includes(skill)) {
@@ -399,7 +399,7 @@ function removeSkill(skill) {
   saveProfile();
   renderProfile();
   updateProfileStrength();
-  showToast("Success", `Skill "${skill}" removed`, "info");
+  showToast("Success", `Skill "${escapeHtml(skill)}" removed`, "info");
 }
 
 // Edit goals
@@ -428,6 +428,14 @@ function downloadCertificate(certificateId) {
   );
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -442,15 +450,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Logout

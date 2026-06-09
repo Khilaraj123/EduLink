@@ -157,16 +157,16 @@ function renderUsers() {
                     <div class="col-md-6 col-lg-3">
                         <div class="user-card" onclick="viewUser(${user.id})">
                             <div class="text-center">
-                                <img src="${user.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
-                                     class="user-avatar" alt="${user.name}">
+                                <img src="${escapeHtml(user.avatar) || "https://randomuser.me/api/portraits/men/1.jpg"}" 
+                                     class="user-avatar" alt="${escapeHtml(user.name)}">
                                 <div class="user-name">${escapeHtml(user.name)}</div>
                                 <div class="user-role">
                                     <span class="role-badge ${roleClass}">
-                                        <i class="fas ${roleIcon}"></i> ${user.role}
+                                        <i class="fas ${roleIcon}"></i> ${escapeHtml(user.role)}
                                     </span>
                                 </div>
                                 <div class="enrollment-stats">
-                                    <i class="fas fa-envelope"></i> ${user.email}
+                                    <i class="fas fa-envelope"></i> ${escapeHtml(user.email)}
                                 </div>
                                 <div class="mt-2">
                                     <span class="${status ? "status-active" : "status-inactive"}">
@@ -253,11 +253,11 @@ function viewUser(userId) {
 
     $("#viewUserContent").html(`
                     <div class="text-center mb-3">
-                        <img src="${user.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
-                             class="user-avatar" style="width: 120px; height: 120px;" alt="${user.name}">
+                        <img src="${escapeHtml(user.avatar) || "https://randomuser.me/api/portraits/men/1.jpg"}" 
+                             class="user-avatar" style="width: 120px; height: 120px;" alt="${escapeHtml(user.name)}">
                         <h4>${escapeHtml(user.name)}</h4>
                         <span class="role-badge ${roleClass}">
-                            <i class="fas ${roleIcon}"></i> ${user.role}
+                            <i class="fas ${roleIcon}"></i> ${escapeHtml(user.role)}
                         </span>
                     </div>
                     <hr>
@@ -266,7 +266,7 @@ function viewUser(userId) {
                             <strong>Email:</strong>
                         </div>
                         <div class="col-6">
-                            ${user.email}
+                            ${escapeHtml(user.email)}
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -292,7 +292,7 @@ function viewUser(userId) {
                             <strong>Joined Date:</strong>
                         </div>
                         <div class="col-6">
-                            ${user.joinDate || "2024-01-15"}
+                            ${escapeHtml(user.joinDate) || "2024-01-15"}
                         </div>
                     </div>
                     ${
@@ -303,7 +303,7 @@ function viewUser(userId) {
                                 <strong>Enrolled Courses:</strong>
                             </div>
                             <div class="col-6">
-                                ${user.enrolledCourses.length}
+                                ${escapeHtml(user.enrolledCourses.length)}
                             </div>
                         </div>
                     `
@@ -480,15 +480,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load admin profile

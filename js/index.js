@@ -45,7 +45,7 @@ function scrollToSection(sectionId) {
 async function loadStatistics() {
   try {
     // Try to load from users.json
-    const usersResponse = await fetch("assets/data/users.json");
+    const usersResponse = await fetch("data/users.json");
     const usersData = await usersResponse.json();
     const totalStudents = usersData.users.filter(
       (u) => u.role === "student",
@@ -55,7 +55,7 @@ async function loadStatistics() {
     ).length;
 
     // Load courses
-    const coursesResponse = await fetch("assets/data/courses.json");
+    const coursesResponse = await fetch("data/courses.json");
     const coursesData = await coursesResponse.json();
     const totalCourses = coursesData.courses.length;
 
@@ -93,7 +93,7 @@ function animateNumber(elementId, targetValue) {
 // Load popular courses
 async function loadPopularCourses() {
   try {
-    const response = await fetch("assets/data/courses.json");
+    const response = await fetch("data/courses.json");
     const data = await response.json();
     const popularCourses = data.courses.slice(0, 3); // Get first 3 courses
 

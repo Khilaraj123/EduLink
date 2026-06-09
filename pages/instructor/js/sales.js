@@ -49,7 +49,7 @@ async function loadSalesData() {
 function populateCourseFilter() {
   let options = '<option value="all">All Courses</option>';
   myCourses.forEach((course) => {
-    options += `<option value="${course.id}">${course.title}</option>`;
+    options += `<option value="${course.id}">${escapeHtml(course.title)}</option>`;
   });
   $("#courseFilter").html(options);
 }
@@ -335,7 +335,7 @@ function updateTopCourses() {
     html += `
                     <tr>
                         <td><span class="badge bg-${index < 3 ? "warning" : "secondary"}">${index + 1}</span></td>
-                        <td>${course.title}</td>
+                        <td>${escapeHtml(course.title)}</td>
                         <td>${course.students}</td>
                         <td>$${course.sales.toLocaleString()}</td>
                         <td><strong>$${course.earnings.toLocaleString()}</strong></td>
@@ -490,11 +490,11 @@ function exportTopCourses() {
   let csv = "Rank,Course Name,Students,Total Sales,Your Earnings\n";
   $("#topCoursesBody tr").each(function () {
     const row = $(this);
-    csv += row.find("td:eq(0)").text() + ",";
-    csv += '"' + row.find("td:eq(1)").text() + '",';
-    csv += row.find("td:eq(2)").text() + ",";
-    csv += row.find("td:eq(3)").text() + ",";
-    csv += row.find("td:eq(4)").text() + "\n";
+    csv += csvEscape(row.find("td:eq(0)").text()) + ",";
+    csv += '"' + csvEscape(row.find("td:eq(1)").text()) + '",';
+    csv += csvEscape(row.find("td:eq(2)").text()) + ",";
+    csv += csvEscape(row.find("td:eq(3)").text()) + ",";
+    csv += csvEscape(row.find("td:eq(4)").text()) + "\n";
   });
 
   downloadCSV(csv, "top_courses.csv");
@@ -504,7 +504,7 @@ function exportTopCourses() {
 function exportTransactions() {
   let csv = "Transaction ID,Date,Student,Course,Amount,Commission,Status\n";
   filteredTransactions.forEach((t) => {
-    csv += `${t.id},${new Date(t.date).toLocaleDateString()},"${t.student}","${t.courseTitle}",${t.amount},${t.commission},${t.status}\n`;
+    csv += `${csvEscape(t.id)},${new Date(t.date).toLocaleDateString()},"${csvEscape(t.student)}","${csvEscape(t.courseTitle)}",${t.amount},${t.commission},${csvEscape(t.status)}\n`;
   });
 
   downloadCSV(csv, "transactions.csv");
@@ -515,6 +515,15 @@ function exportChart() {
   showToast("Info", "Chart export feature coming soon!", "info");
 }
 
+// CSV escape helper
+function csvEscape(value) {
+  const str = String(value);
+  if (/^[=+\-@]/.test(str)) {
+    return "'" + str;
+  }
+  return str;
+}
+
 // Download CSV
 function downloadCSV(csv, filename) {
   const blob = new Blob([csv], { type: "text/csv" });
@@ -523,6 +532,14 @@ function downloadCSV(csv, filename) {
   link.download = filename;
   link.click();
   showToast("Success", "CSV exported successfully!", "success");
+}
+
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Show toast notification
@@ -539,14 +556,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile

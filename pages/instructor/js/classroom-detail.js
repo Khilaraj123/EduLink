@@ -190,14 +190,14 @@ function renderStudentsList() {
     html += `
                     <div class="student-item">
                         <div class="d-flex align-items-center">
-                            <img src="${student.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
-                                 class="student-avatar" alt="${student.name}">
+                            <img src="${escapeHtml(student.avatar) || "https://randomuser.me/api/portraits/men/1.jpg"}" 
+                                 class="student-avatar" alt="${escapeHtml(student.name)}">
                             <div>
-                                <strong>${student.name}</strong>
+                                <strong>${escapeHtml(student.name)}</strong>
                                 <br>
-                                <small class="text-muted">${student.email}</small>
+                                <small class="text-muted">${escapeHtml(student.email)}</small>
                                 <br>
-                                <small class="text-success">Enrolled: ${student.joinDate || "N/A"}</small>
+                                <small class="text-success">Enrolled: ${escapeHtml(student.joinDate) || "N/A"}</small>
                             </div>
                         </div>
                         <div class="text-end">
@@ -237,8 +237,8 @@ function renderAssignments() {
                     <div class="assignment-item">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">${assignment.title}</h6>
-                                <p class="mb-1 small">${assignment.description}</p>
+                                <h6 class="mb-1">${escapeHtml(assignment.title)}</h6>
+                                <p class="mb-1 small">${escapeHtml(assignment.description)}</p>
                                 <div class="mb-2">
                                     <span class="badge bg-secondary">Due: ${new Date(assignment.dueDate).toLocaleString()}</span>
                                     <span class="badge bg-info">Max Score: ${assignment.maxPoints}</span>
@@ -309,10 +309,10 @@ function renderAnnouncements() {
     .forEach((announcement) => {
       html += `
                     <div class="announcement-item">
-                        <h6 class="mb-1">${announcement.title}</h6>
-                        <p class="mb-1">${announcement.content}</p>
+                        <h6 class="mb-1">${escapeHtml(announcement.title)}</h6>
+                        <p class="mb-1">${escapeHtml(announcement.content)}</p>
                         <small class="text-muted">
-                            <i class="fas fa-user"></i> ${announcement.author} • 
+                            <i class="fas fa-user"></i> ${escapeHtml(announcement.author)} • 
                             <i class="fas fa-calendar"></i> ${new Date(announcement.date).toLocaleString()}
                         </small>
                         <button class="btn btn-sm btn-link text-danger float-end" onclick="deleteAnnouncement(${announcement.id})">
@@ -339,10 +339,10 @@ function renderDiscussions() {
                     <div class="discussion-item">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <strong>${discussion.title}</strong>
+                                <strong>${escapeHtml(discussion.title)}</strong>
                                 <br>
                                 <small class="text-muted">
-                                    <i class="fas fa-user"></i> ${discussion.author} • 
+                                    <i class="fas fa-user"></i> ${escapeHtml(discussion.author)} • 
                                     <i class="fas fa-calendar"></i> ${new Date(discussion.date).toLocaleString()}
                                 </small>
                             </div>
@@ -350,7 +350,7 @@ function renderDiscussions() {
                                 <i class="fas fa-reply"></i> Reply
                             </button>
                         </div>
-                        <p class="mt-2 mb-2">${discussion.content}</p>
+                        <p class="mt-2 mb-2">${escapeHtml(discussion.content)}</p>
                         <div class="replies">
                             ${renderReplies(discussion.replies || [])}
                         </div>
@@ -367,9 +367,9 @@ function renderReplies(replies) {
   replies.forEach((reply) => {
     html += `
                     <div class="mt-2 ps-3 border-start">
-                        <strong>${reply.author}</strong>
+                        <strong>${escapeHtml(reply.author)}</strong>
                         <small class="text-muted"> • ${new Date(reply.date).toLocaleString()}</small>
-                        <p class="mb-0 small">${reply.content}</p>
+                        <p class="mb-0 small">${escapeHtml(reply.content)}</p>
                     </div>
                 `;
   });
@@ -495,7 +495,7 @@ function viewSubmissions(assignmentId) {
   const assignment = assignments.find((a) => a.id === assignmentId);
   const submissions = getAssignmentSubmissions(assignmentId);
 
-  let message = `Submissions for "${assignment.title}":\n\n`;
+  let message = `Submissions for "${escapeHtml(assignment.title)}":\n\n`;
   submissions.forEach((sub) => {
     const status = sub.submitted
       ? sub.graded
@@ -699,6 +699,14 @@ function editClassroom() {
   }
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -713,21 +721,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile
 function loadInstructorProfile() {
   if (currentUser) {
     $("#instructorWelcome").html(
-      `<i class="fas fa-chalkboard-teacher"></i> ${currentUser.name}`,
+      `<i class="fas fa-chalkboard-teacher"></i> ${escapeHtml(currentUser.name)}`,
     );
   }
 }

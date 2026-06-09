@@ -117,11 +117,11 @@ function renderProfile() {
 // Load statistics
 async function loadStats() {
   try {
-    const usersResponse = await fetch("../../assets/data/users.json");
+    const usersResponse = await fetch("../../data/users.json");
     const usersData = await usersResponse.json();
     const totalUsers = usersData.users.length;
 
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     const totalCourses = coursesData.courses.length;
 
@@ -182,11 +182,11 @@ function loadRecentActivity() {
                             <i class="fas ${activity.type === "login" ? "fa-sign-in-alt" : activity.type === "action" ? "fa-check" : "fa-cog"}"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <strong>${activity.action}</strong>
+                            <strong>${escapeHtml(activity.action)}</strong>
                             <br>
-                            <small>${activity.detail}</small>
+                            <small>${escapeHtml(activity.detail)}</small>
                             <br>
-                            <small class="text-muted">${activity.time}</small>
+                            <small class="text-muted">${escapeHtml(activity.time)}</small>
                         </div>
                     </div>
                 `;
@@ -337,6 +337,14 @@ function viewAllActivities() {
   showToast("Activities", "Full activity log feature coming soon!", "info");
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -351,15 +359,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Logout

@@ -106,16 +106,16 @@ function renderCourses() {
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="card course-card h-100">
                             <div class="position-relative">
-                                <img src="${course.image}" class="card-img-top course-image" alt="${course.title}">
-                                <span class="badge bg-${getLevelColor(course.level)} badge-level">${course.level}</span>
+                                <img src="${escapeHtml(course.image)}" class="card-img-top course-image" alt="${escapeHtml(course.title)}">
+                                <span class="badge bg-${getLevelColor(course.level)} badge-level">${escapeHtml(course.level)}</span>
                                 ${course.enrolled ? '<span class="enrolled-badge"><i class="fas fa-check-circle"></i> Enrolled</span>' : ""}
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">${course.title}</h5>
+                                <h5 class="card-title">${escapeHtml(course.title)}</h5>
                                 <p class="card-text text-muted small">
-                                    <i class="fas fa-user"></i> ${course.instructorName}
+                                    <i class="fas fa-user"></i> ${escapeHtml(course.instructorName)}
                                 </p>
-                                <p class="card-text">${course.description.substring(0, 100)}...</p>
+                                <p class="card-text">${escapeHtml(course.description.substring(0, 100))}...</p>
                                 <div class="mb-2">
                                     <span class="rating">
                                         ${generateStars(course.rating)}
@@ -124,7 +124,7 @@ function renderCourses() {
                                 </div>
                                 <div class="mb-2">
                                     <small class="text-muted">
-                                        <i class="fas fa-clock"></i> ${course.duration} |
+                                        <i class="fas fa-clock"></i> ${escapeHtml(course.duration)} |
                                         <i class="fas fa-users"></i> ${course.students} students
                                     </small>
                                 </div>
@@ -187,10 +187,10 @@ function getLevelColor(level) {
 function updateFilterChips(searchTerm, levelFilter) {
   let chips = "";
   if (searchTerm) {
-    chips += `<span class="badge bg-secondary me-1">Search: ${searchTerm} <i class="fas fa-times" style="cursor:pointer" onclick="clearSearch()"></i></span>`;
+    chips += `<span class="badge bg-secondary me-1">Search: ${escapeHtml(searchTerm)} <i class="fas fa-times" style="cursor:pointer" onclick="clearSearch()"></i></span>`;
   }
   if (levelFilter) {
-    chips += `<span class="badge bg-secondary me-1">Level: ${levelFilter} <i class="fas fa-times" style="cursor:pointer" onclick="clearLevel()"></i></span>`;
+    chips += `<span class="badge bg-secondary me-1">Level: ${escapeHtml(levelFilter)} <i class="fas fa-times" style="cursor:pointer" onclick="clearLevel()"></i></span>`;
   }
   $("#filterChips").html(
     chips || '<span class="text-muted">No filters applied</span>',
@@ -256,7 +256,7 @@ function enrollInCourse() {
   // Show success message
   showToast(
     "Success!",
-    `You have successfully enrolled in ${course.title}`,
+    `You have successfully enrolled in ${escapeHtml(course.title)}`,
     "success",
   );
 
@@ -290,11 +290,25 @@ function updateEnrollmentStats() {
     }
   });
 
+  const completedCourses = currentUser.enrolledCourses?.filter(id => {
+    const p = localStorage.getItem(`course_progress_${currentUser.id}_${id}`);
+    if (p) { try { const d = JSON.parse(p); return d.completedLessons?.length > 0; } catch(e) {} }
+    return false;
+  }).length || 0;
+  const completionRate = enrolledCount > 0 ? Math.round((completedCourses / enrolledCount) * 100) : 0;
   $("#enrollmentStats").html(`
                 <div><i class="fas fa-graduation-cap"></i> Enrolled: <strong>${enrolledCount}</strong></div>
                 <div class="mt-2"><i class="fas fa-dollar-sign"></i> Total Spent: <strong>$${totalSpent.toFixed(2)}</strong></div>
-                <div class="mt-2"><i class="fas fa-trophy"></i> Completion Rate: <strong>${Math.floor(Math.random() * 100)}%</strong></div>
+                <div class="mt-2"><i class="fas fa-trophy"></i> Completion Rate: <strong>${completionRate}%</strong></div>
             `);
+}
+
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Show toast notification
@@ -311,23 +325,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  // Remove toast after it's hidden
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load user profile
 function loadUserProfile() {
   if (currentUser) {
     $("#userWelcome").html(
-      `<i class="fas fa-user-circle"></i> Welcome, ${currentUser.name}`,
+      `<i class="fas fa-user-circle"></i> Welcome, ${escapeHtml(currentUser.name)}`,
     );
   }
 }

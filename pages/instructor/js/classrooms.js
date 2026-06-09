@@ -84,7 +84,7 @@ function saveClassrooms() {
 function populateCourseSelect() {
   let options = '<option value="">Select Course</option>';
   myCourses.forEach((course) => {
-    options += `<option value="${course.id}">${course.title}</option>`;
+    options += `<option value="${course.id}">${escapeHtml(course.title)}</option>`;
   });
   $("#classCourse").html(options);
 }
@@ -93,7 +93,7 @@ function populateCourseSelect() {
 function populateStudentSelect() {
   let options = "";
   allStudents.forEach((student) => {
-    options += `<option value="${student.id}">${student.name} (${student.email})</option>`;
+    options += `<option value="${student.id}">${escapeHtml(student.name)} (${escapeHtml(student.email)})</option>`;
   });
   $("#classStudents").html(options);
 }
@@ -218,9 +218,9 @@ function renderClassrooms() {
                             </div>
                             <div class="classroom-body">
                                 <p class="small text-muted mb-0">
-                                    ${classroom.description || "No description provided"}
+                                    ${escapeHtml(classroom.description) || "No description provided"}
                                 </p>
-                                ${classroom.startDate ? `<small class="text-muted"><i class="fas fa-calendar"></i> Starts: ${classroom.startDate}</small>` : ""}
+                                ${classroom.startDate ? `<small class="text-muted"><i class="fas fa-calendar"></i> Starts: ${escapeHtml(classroom.startDate)}</small>` : ""}
                             </div>
                             <div class="classroom-actions">
                                 <div class="btn-group w-100" role="group">
@@ -439,14 +439,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile

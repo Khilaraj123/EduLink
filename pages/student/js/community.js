@@ -30,7 +30,7 @@ async function loadPosts() {
       allPosts = JSON.parse(savedPosts);
     } else {
       // Load from JSON file
-      const response = await fetch("../../assets/data/questions.json");
+      const response = await fetch("../../data/questions.json");
       const data = await response.json();
 
       // Convert questions to posts format
@@ -186,20 +186,20 @@ function renderPosts() {
     html += `
                     <div class="post-card" id="post-${post.id}">
                         <div class="post-header">
-                            <img src="${post.authorAvatar}" class="avatar" alt="${post.author}">
+                            <img src="${escapeHtml(post.authorAvatar)}" class="avatar" alt="${escapeHtml(post.author)}">
                             <div class="post-meta">
                                 <div class="post-title">
-                                    ${post.title}
-                                    <span class="badge-category">${post.category}</span>
+                                    ${escapeHtml(post.title)}
+                                    <span class="badge-category">${escapeHtml(post.category)}</span>
                                 </div>
                                 <small class="text-muted">
-                                    <i class="fas fa-user"></i> ${post.author} • 
-                                    <i class="fas fa-calendar"></i> ${post.date}
+                                    <i class="fas fa-user"></i> ${escapeHtml(post.author)} • 
+                                    <i class="fas fa-calendar"></i> ${escapeHtml(post.date)}
                                 </small>
                             </div>
                         </div>
                         <div class="post-content">
-                            ${post.content}
+                            ${escapeHtml(post.content)}
                         </div>
                         <div class="post-stats">
                             <div class="stat-item" onclick="toggleUpvote(${post.id})">
@@ -245,12 +245,12 @@ function renderComments(comments, postId) {
     html += `
                     <div class="comment">
                         <img src="https://randomuser.me/api/portraits/${comment.authorId % 2 === 0 ? "men" : "women"}/${comment.authorId}.jpg" 
-                             class="avatar-sm" alt="${comment.author}">
+                             class="avatar-sm" alt="${escapeHtml(comment.author)}">
                         <div class="comment-content">
-                            <div class="comment-author">${comment.author}</div>
-                            <div class="comment-text">${comment.content}</div>
+                            <div class="comment-author">${escapeHtml(comment.author)}</div>
+                            <div class="comment-text">${escapeHtml(comment.content)}</div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <small class="comment-time">${comment.date}</small>
+                                <small class="comment-time">${escapeHtml(comment.date)}</small>
                                 <span class="reply-btn" onclick="showReplyToCommentModal(${postId}, ${comment.id})">
                                     <i class="fas fa-reply"></i> Reply
                                 </span>
@@ -269,9 +269,9 @@ function renderReplies(replies) {
   replies.forEach((reply) => {
     html += `
                     <div class="reply">
-                        <strong>${reply.author}</strong>
-                        <p class="mb-0 small">${reply.content}</p>
-                        <small class="text-muted">${reply.date}</small>
+                        <strong>${escapeHtml(reply.author)}</strong>
+                        <p class="mb-0 small">${escapeHtml(reply.content)}</p>
+                        <small class="text-muted">${escapeHtml(reply.date)}</small>
                     </div>
                 `;
   });
@@ -357,7 +357,7 @@ function scrollToComments(postId) {
 function sharePost(postId) {
   const post = allPosts.find((p) => p.id === postId);
   if (post) {
-    const shareText = `Check out this post: ${post.title}`;
+    const shareText = `Check out this post: ${escapeHtml(post.title)}`;
     navigator.clipboard.writeText(shareText);
     showToast("Copied!", "Link copied to clipboard", "success");
   }
@@ -452,9 +452,10 @@ function createPost(title, category, content) {
 
 // Update statistics
 function updateStats() {
-  $("#totalMembers").text(Math.floor(Math.random() * 500) + 200);
+  const uniqueMembers = new Set(allPosts.map(p => p.authorId)).size;
+  $("#totalMembers").text(Math.max(uniqueMembers, allPosts.length) || 0);
   $("#totalPosts").text(allPosts.length);
-  $("#activeToday").text(Math.floor(Math.random() * 100) + 50);
+  $("#activeToday").text(Math.max(Math.floor(allPosts.length * 0.3), 0) || 0);
 
   // Trending tags
   const tags = [
@@ -478,6 +479,14 @@ function searchByTag(tag) {
   searchPosts();
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -492,22 +501,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load user profile
 function loadUserProfile() {
   if (currentUser) {
     $("#userWelcome").html(
-      `<i class="fas fa-user-circle"></i> Welcome, ${currentUser.name.split(" ")[0]}`,
+      `<i class="fas fa-user-circle"></i> Welcome, ${escapeHtml(currentUser.name.split(" ")[0])}`,
     );
   }
 }

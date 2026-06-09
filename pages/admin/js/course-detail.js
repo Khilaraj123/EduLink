@@ -176,13 +176,13 @@ function loadEnrolledStudents() {
 
   let html = "";
   enrolledStudents.forEach((student, index) => {
-    const progress = Math.floor(Math.random() * 100);
+    const progress = 0;
     html += `
                     <tr>
                         <td>
-                            <img src="${student.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
-                                 class="student-avatar" alt="${student.name}">
-                            ${student.name}
+                            <img src="${escapeHtml(student.avatar) || "https://randomuser.me/api/portraits/men/1.jpg"}" 
+                                 class="student-avatar" alt="${escapeHtml(student.name)}">
+                            ${escapeHtml(student.name)}
                         </td>
                         <td>
                             <div class="progress" style="width: 100px;">
@@ -221,14 +221,14 @@ function renderReviews() {
                     <div class="review-item">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <strong>${review.userName}</strong>
+                                <strong>${escapeHtml(review.userName)}</strong>
                                 <div class="rating-stars">
                                     ${generateStarRating(review.rating)}
                                 </div>
                             </div>
-                            <small class="text-muted">${review.date}</small>
+                            <small class="text-muted">${escapeHtml(review.date)}</small>
                         </div>
-                        <p class="mt-2 mb-0">${review.comment}</p>
+                        <p class="mt-2 mb-0">${escapeHtml(review.comment)}</p>
                     </div>
                 `;
   });
@@ -395,22 +395,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load admin profile
 function loadAdminProfile() {
   if (currentUser) {
     $("#adminWelcome").html(
-      `<i class="fas fa-user-shield"></i> ${currentUser.name}`,
+      `<i class="fas fa-user-shield"></i> ${escapeHtml(currentUser.name)}`,
     );
   }
 }

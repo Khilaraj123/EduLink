@@ -51,7 +51,7 @@ async function loadInstructorData() {
 function populateCourseSelect() {
   let options = '<option value="all">All Courses</option>';
   myCourses.forEach((course) => {
-    options += `<option value="${course.id}">${course.title}</option>`;
+    options += `<option value="${course.id}">${escapeHtml(course.title)}</option>`;
   });
   $("#courseSelect").html(options);
 }
@@ -60,11 +60,30 @@ function populateCourseSelect() {
 function loadProgressData() {
   courseProgress = {};
   myCourses.forEach((course) => {
-    const savedProgress = localStorage.getItem(`course_progress_${course.id}`);
-    if (savedProgress) {
-      courseProgress[course.id] = JSON.parse(savedProgress);
-    }
+    courseProgress[course.id] = { completedLessons: [], currentLesson: 0 };
   });
+  // Search localStorage for any progress keys matching the pattern course_progress_{userId}_{courseId}
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith("course_progress_")) {
+      const parts = key.split("_");
+      const courseId = parseInt(parts[parts.length - 1]);
+      if (courseId && courseProgress[courseId]) {
+        const saved = localStorage.getItem(key);
+        if (saved) {
+          try {
+            const data = JSON.parse(saved);
+            if (data.completedLessons) {
+              courseProgress[courseId].completedLessons = [
+                ...courseProgress[courseId].completedLessons,
+                ...data.completedLessons,
+              ];
+            }
+          } catch (e) {}
+        }
+      }
+    }
+  }
 }
 
 // Update analytics based on selection
@@ -116,23 +135,16 @@ function calculateStats(courses, days) {
 
   // Update trends (simulated)
   $("#studentTrend").html(
-    '<i class="fas fa-arrow-up"></i> +' +
-      (Math.random() * 15 + 5).toFixed(0) +
-      "%",
+    '<i class="fas fa-arrow-up"></i> +0%',
   );
   $("#revenueTrend").html(
-    '<i class="fas fa-arrow-up"></i> +' +
-      (Math.random() * 20 + 10).toFixed(0) +
-      "%",
+    '<i class="fas fa-arrow-up"></i> +0%',
   );
   $("#ratingTrend").html(
-    '<i class="fas fa-arrow-up"></i> +' +
-      (Math.random() * 0.5 + 0.1).toFixed(1),
+    '<i class="fas fa-arrow-up"></i> +0.0',
   );
   $("#completionTrend").html(
-    '<i class="fas fa-arrow-up"></i> +' +
-      (Math.random() * 8 + 2).toFixed(0) +
-      "%",
+    '<i class="fas fa-arrow-up"></i> +0%',
   );
 }
 
@@ -277,8 +289,10 @@ function generateEnrollmentData(courses) {
     "Nov",
     "Dec",
   ];
-  const enrollments = months.map(() => Math.floor(Math.random() * 50) + 10);
-  const revenue = enrollments.map((e) => e * (courses[0]?.price || 49.99));
+  const baseStudents = courses.reduce((sum, c) => sum + (c.students || 0), 0);
+  const basePrice = courses.reduce((sum, c) => sum + (c.price || 0), 0) / (courses.length || 1);
+  const enrollments = months.map((_, i) => Math.floor((baseStudents / 12) * (i + 1) * 0.5) + 5);
+  const revenue = enrollments.map((e) => e * basePrice);
   return { labels: months, enrollments, revenue };
 }
 
@@ -354,7 +368,7 @@ function updateCoursePerformance(courses) {
 
     html += `
                     <tr>
-                        <td>${course.title}</td>
+                        <td>${escapeHtml(course.title)}</td>
                         <td>${course.students || 0}</td>
                         <td>$${((course.price || 0) * (course.students || 0)).toLocaleString()}</td>
                         <td>
@@ -391,7 +405,10 @@ function updateStudentActivity(courses) {
     for (let i = 0; i < Math.min(course.students || 0, 10); i++) {
       const student = allStudents[i % allStudents.length];
       if (student && !enrolledStudents.find((s) => s.id === student.id)) {
-        const progress = Math.floor(Math.random() * 100);
+        const prog = courseProgress[course.id];
+        const completedCount = prog?.completedLessons?.length || 0;
+        const totalLessons = course.curriculum?.length || 1;
+        const progress = Math.min(Math.round((completedCount / totalLessons) * 100), 100);
         enrolledStudents.push({
           ...student,
           courseTitle: course.title,
@@ -409,12 +426,12 @@ function updateStudentActivity(courses) {
     html += `
                     <div class="student-item">
                         <div class="d-flex align-items-center">
-                            <img src="${student.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
-                                 class="student-avatar" alt="${student.name}">
+                            <img src="${escapeHtml(student.avatar) || "https://randomuser.me/api/portraits/men/1.jpg"}" 
+                                 class="student-avatar" alt="${escapeHtml(student.name)}">
                             <div class="flex-grow-1">
-                                <strong>${student.name}</strong>
+                                <strong>${escapeHtml(student.name)}</strong>
                                 <br>
-                                <small class="text-muted">Course: ${student.courseTitle}</small>
+                                <small class="text-muted">Course: ${escapeHtml(student.courseTitle)}</small>
                             </div>
                             <div class="text-end">
                                 <div class="progress" style="width: 100px;">
@@ -422,7 +439,7 @@ function updateStudentActivity(courses) {
                                 </div>
                                 <small>${student.progress}% complete</small>
                                 <br>
-                                <small class="text-muted">Last active: ${student.lastActive}</small>
+                                <small class="text-muted">Last active: ${escapeHtml(student.lastActive)}</small>
                             </div>
                         </div>
                     </div>
@@ -438,7 +455,7 @@ function updateStudentActivity(courses) {
 function generateStarRating(rating) {
   let stars = "";
   for (let i = 1; i <= 5; i++) {
-    stars += `<i class="fas fa-star${i <= rating ? "" : "-o"}"></i>`;
+    stars += `<i class="${i <= rating ? "fas" : "far"} fa-star"></i>`;
   }
   return stars;
 }
@@ -474,17 +491,26 @@ function exportChart(chartName) {
   showToast("Info", "Chart export feature coming soon!", "info");
 }
 
+// CSV escape helper
+function csvEscape(value) {
+  const str = String(value);
+  if (/^[=+\-@]/.test(str)) {
+    return "'" + str;
+  }
+  return str;
+}
+
 // Export course performance
 function exportCoursePerformance() {
   let csv = "Course Name,Students,Revenue,Rating,Completion Rate,Engagement\n";
   $("#coursePerformanceBody tr").each(function () {
     const row = $(this);
-    csv += '"' + row.find("td:eq(0)").text() + '",';
-    csv += row.find("td:eq(1)").text() + ",";
-    csv += row.find("td:eq(2)").text() + ",";
-    csv += row.find("td:eq(3)").text().split("★").length - 1 + ",";
-    csv += row.find("td:eq(4) small").text() + ",";
-    csv += row.find("td:eq(5) small").text() + "\n";
+    csv += '"' + csvEscape(row.find("td:eq(0)").text()) + '",';
+    csv += csvEscape(row.find("td:eq(1)").text()) + ",";
+    csv += csvEscape(row.find("td:eq(2)").text()) + ",";
+    csv += csvEscape(row.find("td:eq(3)").text().split("★").length - 1) + ",";
+    csv += csvEscape(row.find("td:eq(4) small").text()) + ",";
+    csv += csvEscape(row.find("td:eq(5) small").text()) + "\n";
   });
 
   const blob = new Blob([csv], { type: "text/csv" });
@@ -493,6 +519,14 @@ function exportCoursePerformance() {
   link.download = "course_performance.csv";
   link.click();
   showToast("Success", "CSV exported successfully!", "success");
+}
+
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Show toast notification
@@ -509,15 +543,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile

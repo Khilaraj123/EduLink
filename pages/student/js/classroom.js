@@ -22,7 +22,7 @@ function checkAuth() {
 // Load classrooms data
 async function loadClassrooms() {
   try {
-    const response = await fetch("../../assets/data/classrooms.json");
+    const response = await fetch("../../data/classrooms.json");
     const data = await response.json();
 
     // Filter classrooms where student is enrolled
@@ -34,7 +34,7 @@ async function loadClassrooms() {
       }));
 
     // Load course details for each classroom
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
 
     classrooms.forEach((classroom) => {
@@ -87,8 +87,8 @@ function renderClassrooms() {
                                 <div class="classroom-icon">
                                     <i class="fas fa-chalkboard-teacher"></i>
                                 </div>
-                                <h5 class="mb-1">${classroom.name}</h5>
-                                <p class="mb-0 small">${classroom.course?.title || "Course"}</p>
+                                <h5 class="mb-1">${escapeHtml(classroom.name)}</h5>
+                                <p class="mb-0 small">${escapeHtml(classroom.course?.title) || "Course"}</p>
                                 <div class="stats-badge">
                                     <i class="fas fa-users"></i> ${classroom.students.length} Students
                                 </div>
@@ -123,8 +123,8 @@ function openClassroom(classroomId) {
   if (!currentClassroom) return;
 
   $("#classroomModalTitle").html(`
-                <i class="fas fa-chalkboard"></i> ${currentClassroom.name}
-                <small class="text-light">${currentClassroom.course?.title}</small>
+                <i class="fas fa-chalkboard"></i> ${escapeHtml(currentClassroom.name)}
+                <small class="text-light">${escapeHtml(currentClassroom.course?.title)}</small>
             `);
 
   loadAnnouncements();
@@ -173,11 +173,11 @@ function loadAnnouncements() {
                                 <i class="fas fa-bullhorn"></i>
                             </div>
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">${announcement.title}</h6>
-                                <p class="mb-1">${announcement.content}</p>
+                                <h6 class="mb-1">${escapeHtml(announcement.title)}</h6>
+                                <p class="mb-1">${escapeHtml(announcement.content)}</p>
                                 <small class="text-muted">
-                                    <i class="fas fa-user"></i> ${announcement.author} | 
-                                    <i class="fas fa-calendar"></i> ${announcement.date}
+                                    <i class="fas fa-user"></i> ${escapeHtml(announcement.author)} | 
+                                    <i class="fas fa-calendar"></i> ${escapeHtml(announcement.date)}
                                 </small>
                             </div>
                         </div>
@@ -217,9 +217,9 @@ function loadAssignments() {
                     <div class="assignment-item">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">${assignment.title}</h6>
+                                <h6 class="mb-1">${escapeHtml(assignment.title)}</h6>
                                 <small class="text-muted">
-                                    <i class="fas fa-calendar-alt"></i> Due: ${assignment.dueDate}
+                                    <i class="fas fa-calendar-alt"></i> Due: ${escapeHtml(assignment.dueDate)}
                                 </small>
                                 <div class="mt-2">
                                     <span class="badge bg-${statusClass}">${statusText}</span>
@@ -229,7 +229,7 @@ function loadAssignments() {
                             ${
                               !assignment.submitted
                                 ? `
-                                <button class="btn btn-sm btn-primary" onclick="showSubmitAssignmentModal(${assignment.id}, '${assignment.title}')">
+                                <button class="btn btn-sm btn-primary" onclick="showSubmitAssignmentModal(${assignment.id}, '${escapeHtml(assignment.title)}')">
                                     <i class="fas fa-upload"></i> Submit
                                 </button>
                             `
@@ -358,11 +358,11 @@ function loadDiscussions() {
                                     <i class="fas fa-user-circle fa-2x text-secondary"></i>
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <h6 class="mb-1">${discussion.topic}</h6>
-                                    <p class="mb-1">${discussion.message}</p>
+                                    <h6 class="mb-1">${escapeHtml(discussion.topic)}</h6>
+                                    <p class="mb-1">${escapeHtml(discussion.message)}</p>
                                     <small class="text-muted">
-                                        <i class="fas fa-user"></i> ${discussion.author} | 
-                                        <i class="fas fa-calendar"></i> ${discussion.date}
+                                        <i class="fas fa-user"></i> ${escapeHtml(discussion.author)} | 
+                                        <i class="fas fa-calendar"></i> ${escapeHtml(discussion.date)}
                                     </small>
                                     <div class="mt-2">
                                         <button class="btn btn-sm btn-link" onclick="toggleReplies(${discussion.id})">
@@ -377,9 +377,9 @@ function loadDiscussions() {
                                           .map(
                                             (reply) => `
                                             <div class="reply-item">
-                                                <strong>${reply.author}</strong>
-                                                <p class="mb-0">${reply.message}</p>
-                                                <small class="text-muted">${reply.date}</small>
+                                                <strong>${escapeHtml(reply.author)}</strong>
+                                                <p class="mb-0">${escapeHtml(reply.message)}</p>
+                                                <small class="text-muted">${escapeHtml(reply.date)}</small>
                                             </div>
                                         `,
                                           )
@@ -520,14 +520,22 @@ function updateUpcomingDeadlines() {
     );
     html += `
                     <small class="d-block mb-2">
-                        <strong>${assignment.title}</strong><br>
-                        ${assignment.classroomName}<br>
-                        Due: ${assignment.dueDate} (${daysLeft} days left)
+                        <strong>${escapeHtml(assignment.title)}</strong><br>
+                        ${escapeHtml(assignment.classroomName)}<br>
+                        Due: ${escapeHtml(assignment.dueDate)} (${daysLeft} days left)
                     </small>
                 `;
   });
 
   $("#upcomingDeadlines").html(html);
+}
+
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Show toast notification
@@ -544,22 +552,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load user profile
 function loadUserProfile() {
   if (currentUser) {
     $("#userWelcome").html(
-      `<i class="fas fa-user-circle"></i> ${currentUser.name}`,
+      `<i class="fas fa-user-circle"></i> ${escapeHtml(currentUser.name)}`,
     );
   }
 }

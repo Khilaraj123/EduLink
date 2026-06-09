@@ -198,15 +198,15 @@ function renderPosts() {
     html += `
                     <div class="post-card" id="post-${post.id}">
                         <div class="post-header">
-                            <img src="${post.authorAvatar}" class="avatar" alt="${post.author}">
+                            <img src="${escapeHtml(post.authorAvatar)}" class="avatar" alt="${escapeHtml(post.author)}">
                             <div class="post-meta">
                                 <div class="post-title">
                                     ${escapeHtml(post.title)}
-                                    <span class="badge-category">${categoryIcon} ${post.category}</span>
+                                    <span class="badge-category">${categoryIcon} ${escapeHtml(post.category)}</span>
                                     ${post.authorRole === "instructor" ? '<span class="badge-instructor"><i class="fas fa-check-circle"></i> Instructor</span>' : ""}
                                 </div>
                                 <small class="text-muted">
-                                    <i class="fas fa-user"></i> ${post.author} • 
+                                    <i class="fas fa-user"></i> ${escapeHtml(post.author)} • 
                                     <i class="fas fa-calendar"></i> ${formatDate(post.date)}
                                 </small>
                             </div>
@@ -276,10 +276,10 @@ function renderComments(comments, postId) {
     html += `
                     <div class="comment">
                         <img src="https://randomuser.me/api/portraits/${comment.authorId % 2 === 0 ? "men" : "women"}/${comment.authorId}.jpg" 
-                             class="avatar-sm" alt="${comment.author}">
+                             class="avatar-sm" alt="${escapeHtml(comment.author)}">
                         <div class="comment-content">
                             <div class="comment-author">
-                                ${comment.author}
+                                ${escapeHtml(comment.author)}
                                 ${comment.authorRole === "instructor" ? '<span class="badge-instructor"><i class="fas fa-check-circle"></i> Instructor</span>' : ""}
                             </div>
                             <div class="comment-text">${escapeHtml(comment.content)}</div>
@@ -303,7 +303,7 @@ function renderReplies(replies) {
   replies.forEach((reply) => {
     html += `
                     <div class="reply">
-                        <strong>${reply.author}</strong>
+                        <strong>${escapeHtml(reply.author)}</strong>
                         ${reply.authorRole === "instructor" ? '<span class="badge-instructor"><i class="fas fa-check-circle"></i></span>' : ""}
                         <p class="mb-0 small">${escapeHtml(reply.content)}</p>
                         <small class="text-muted">${formatDate(reply.date)}</small>
@@ -488,9 +488,10 @@ function refreshPosts() {
 
 // Update statistics
 function updateStats() {
-  $("#totalMembers").text(Math.floor(Math.random() * 500) + 200);
+  const uniqueMembers = new Set(allPosts.map(p => p.authorId)).size;
+  $("#totalMembers").text(Math.max(uniqueMembers, allPosts.length) || 0);
   $("#totalPosts").text(allPosts.length);
-  $("#activeToday").text(Math.floor(Math.random() * 100) + 50);
+  $("#activeToday").text(Math.max(Math.floor(allPosts.length * 0.3), 0) || 0);
 
   // Trending tags
   const tags = [
@@ -536,14 +537,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile

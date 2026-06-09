@@ -131,7 +131,7 @@ function renderProfile() {
 // Load statistics
 async function loadStats() {
   try {
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     const myCourses = coursesData.courses.filter(
       (c) => c.instructorId === currentUser.id,
@@ -194,11 +194,11 @@ function loadRecentActivity() {
                             <i class="fas ${activity.icon}"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <strong>${activity.action}</strong>
+                            <strong>${escapeHtml(activity.action)}</strong>
                             <br>
-                            <small>${activity.detail}</small>
+                            <small>${escapeHtml(activity.detail)}</small>
                             <br>
-                            <small class="text-muted">${activity.time}</small>
+                            <small class="text-muted">${escapeHtml(activity.time)}</small>
                         </div>
                     </div>
                 `;
@@ -209,7 +209,7 @@ function loadRecentActivity() {
 // Load teaching stats
 async function loadTeachingStats() {
   try {
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     const myCourses = coursesData.courses.filter(
       (c) => c.instructorId === currentUser.id,
@@ -224,7 +224,7 @@ async function loadTeachingStats() {
     // Generate star rating
     let stars = "";
     for (let i = 1; i <= 5; i++) {
-      stars += `<i class="fas fa-star${i <= Math.round(avgRating) ? "" : "-o"}"></i>`;
+      stars += `<i class="${i <= Math.round(avgRating) ? "fas" : "far"} fa-star"></i>`;
     }
     $("#avgRatingStars").html(stars);
     $("#avgRatingValue").text(avgRating.toFixed(1));
@@ -407,6 +407,14 @@ function viewAllActivities() {
   showToast("Activities", "Full activity log feature coming soon!", "info");
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -421,14 +429,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Logout

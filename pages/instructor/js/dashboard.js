@@ -121,6 +121,8 @@ function animateNumber(elementId, targetValue) {
 
 // Initialize charts
 function initializeCharts() {
+  if (revenueChart) revenueChart.destroy();
+  if (courseDistributionChart) courseDistributionChart.destroy();
   // Revenue Chart
   const revenueData = generateRevenueData();
   revenueChart = new Chart(document.getElementById("revenueChart"), {
@@ -283,11 +285,11 @@ function loadRecentActivities() {
                             <i class="fas ${activity.icon}"></i>
                         </div>
                         <div class="flex-grow-1">
-                            <strong>${activity.action}</strong>
+                            <strong>${escapeHtml(activity.action)}</strong>
                             <br>
-                            <small>${activity.detail}</small>
+                            <small>${escapeHtml(activity.detail)}</small>
                             <br>
-                            <small class="text-muted">${activity.time}</small>
+                            <small class="text-muted">${escapeHtml(activity.time)}</small>
                         </div>
                     </div>
                 `;
@@ -311,9 +313,9 @@ function loadRecentCourses() {
   recentCourses.forEach((course) => {
     html += `
                     <div class="course-item" onclick="window.location.href='course-detail.html?id=${course.id}'">
-                        <img src="${course.image}" class="course-thumb" alt="${course.title}">
+                        <img src="${escapeHtml(course.image)}" class="course-thumb" alt="${escapeHtml(course.title)}">
                         <div class="flex-grow-1">
-                            <strong>${course.title}</strong>
+                            <strong>${escapeHtml(course.title)}</strong>
                             <br>
                             <div class="rating-stars">
                                 ${generateStarRating(course.rating || 0)}
@@ -336,7 +338,7 @@ function loadRecentCourses() {
 function generateStarRating(rating) {
   let stars = "";
   for (let i = 1; i <= 5; i++) {
-    stars += `<i class="fas fa-star${i <= rating ? "" : "-o"}"></i>`;
+    stars += `<i class="${i <= rating ? "fas" : "far"} fa-star"></i>`;
   }
   return stars;
 }
@@ -378,6 +380,14 @@ function generateReport() {
   showToast("Success", "Report generated and downloaded!", "success");
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -392,14 +402,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile
@@ -412,9 +422,19 @@ function loadInstructorProfile() {
 }
 
 // Auto-refresh data every 30 seconds
-setInterval(() => {
+let refreshInterval = setInterval(() => {
   loadDashboardData();
 }, 30000);
+
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) {
+    clearInterval(refreshInterval);
+  } else {
+    refreshInterval = setInterval(() => {
+      loadDashboardData();
+    }, 30000);
+  }
+});
 
 // Logout
 function logout() {

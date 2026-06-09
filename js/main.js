@@ -24,7 +24,7 @@ $('#logoutBtn').on('click', function(e) {
 // Load student enrolled courses
 function loadStudentCourses() {
     const user = checkAuth();
-    $.getJSON('../../assets/data/courses.json', function(data) {
+    $.getJSON('../../data/courses.json', function(data) {
         const enrolled = data.courses.filter(c => user.enrolledCourses.includes(c.id));
         $('#enrolledCount').text(enrolled.length);
         

@@ -181,7 +181,7 @@ function renderClassrooms() {
                             </div>
                             <div class="classroom-body">
                                 <p class="small text-muted mb-0">
-                                    ${classroom.description || "No description provided"}
+                                    ${escapeHtml(classroom.description) || "No description provided"}
                                 </p>
                             </div>
                             <div class="classroom-actions">
@@ -295,7 +295,7 @@ function populateDropdowns(selectedData = null) {
   let courseOptions = '<option value="">Select Course</option>';
   allCourses.forEach((course) => {
     courseOptions += `<option value="${course.id}" ${selectedData?.courseId === course.id ? "selected" : ""}>
-                                    ${course.title}
+                                    ${escapeHtml(course.title)}
                                  </option>`;
   });
   $("#classCourse").html(courseOptions);
@@ -314,7 +314,7 @@ function populateDropdowns(selectedData = null) {
   let studentOptions = "";
   const students = allUsers.filter((u) => u.role === "student");
   students.forEach((student) => {
-    studentOptions += `<option value="${student.id}">${student.name} (${student.email})</option>`;
+    studentOptions += `<option value="${student.id}">${escapeHtml(student.name)} (${escapeHtml(student.email)})</option>`;
   });
   $("#classStudents").html(studentOptions);
 }
@@ -426,15 +426,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load admin profile

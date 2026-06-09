@@ -22,7 +22,7 @@ function checkAuth() {
 async function loadData() {
   try {
     // Load courses
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     allCourses = coursesData.courses;
 
@@ -33,13 +33,12 @@ async function loadData() {
     if (savedProgress) {
       courseProgress = JSON.parse(savedProgress);
     } else {
-      // Initialize progress for enrolled courses
       courseProgress = {};
       currentUser.enrolledCourses.forEach((courseId) => {
         courseProgress[courseId] = {
-          progress: Math.floor(Math.random() * 100),
+          progress: 0,
           lastAccessed: new Date().toISOString(),
-          completed: Math.random() > 0.7,
+          completed: false,
         };
       });
       saveProgress();
@@ -264,13 +263,13 @@ function generateCourseCard(course) {
                 <div class="col-md-6 col-lg-4">
                     <div class="card course-card h-100">
                         <div class="position-relative">
-                            <img src="${course.image}" class="card-img-top course-image" alt="${course.title}">
-                            <span class="badge bg-${statusColor} badge-status">${statusText}</span>
+                            <img src="${escapeHtml(course.image)}" class="card-img-top course-image" alt="${escapeHtml(course.title)}">
+                            <span class="badge bg-${statusColor} badge-status">${escapeHtml(statusText)}</span>
                         </div>
                         <div class="card-body">
-                            <h5 class="card-title">${course.title}</h5>
+                            <h5 class="card-title">${escapeHtml(course.title)}</h5>
                             <p class="card-text text-muted small">
-                                <i class="fas fa-user"></i> ${course.instructorName}
+                                <i class="fas fa-user"></i> ${escapeHtml(course.instructorName)}
                             </p>
                             <div class="mb-2">
                                 <div class="d-flex justify-content-between">
@@ -314,21 +313,21 @@ function showCourseModal(courseId) {
   $("#modalCourseContent").html(`
                 <div class="row">
                     <div class="col-md-4">
-                        <img src="${course.image}" class="img-fluid rounded" alt="${course.title}">
+                        <img src="${escapeHtml(course.image)}" class="img-fluid rounded" alt="${escapeHtml(course.title)}">
                     </div>
                     <div class="col-md-8">
                         <h6>Course Information</h6>
-                        <p><strong>Instructor:</strong> ${course.instructorName}</p>
-                        <p><strong>Duration:</strong> ${course.duration}</p>
-                        <p><strong>Level:</strong> ${course.level}</p>
+                        <p><strong>Instructor:</strong> ${escapeHtml(course.instructorName)}</p>
+                        <p><strong>Duration:</strong> ${escapeHtml(course.duration)}</p>
+                        <p><strong>Level:</strong> ${escapeHtml(course.level)}</p>
                         <p><strong>Progress:</strong> ${course.progress}%</p>
                         <div class="progress mb-3">
                             <div class="progress-bar" style="width: ${course.progress}%"></div>
                         </div>
                         <h6>Description</h6>
-                        <p>${course.description}</p>
+                        <p>${escapeHtml(course.description)}</p>
                         <h6>Next Lesson</h6>
-                        <p>${nextLesson}</p>
+                        <p>${escapeHtml(nextLesson)}</p>
                     </div>
                 </div>
             `);
@@ -369,6 +368,14 @@ function formatDate(dateString) {
   return date.toLocaleDateString();
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -383,22 +390,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load user profile
 function loadUserProfile() {
   if (currentUser) {
     $("#userWelcome").html(
-      `<i class="fas fa-user-circle"></i> Welcome back, ${currentUser.name.split(" ")[0]}!`,
+      `<i class="fas fa-user-circle"></i> Welcome back, ${escapeHtml(currentUser.name.split(" ")[0])}!`,
     );
   }
 }

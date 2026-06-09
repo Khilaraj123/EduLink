@@ -147,14 +147,14 @@ function renderStudentsList() {
     html += `
                     <div class="student-item">
                         <div class="d-flex align-items-center">
-                            <img src="${student.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
-                                 class="student-avatar" alt="${student.name}">
+                            <img src="${escapeHtml(student.avatar) || "https://randomuser.me/api/portraits/men/1.jpg"}" 
+                                 class="student-avatar" alt="${escapeHtml(student.name)}">
                             <div>
-                                <strong>${student.name}</strong>
+                                <strong>${escapeHtml(student.name)}</strong>
                                 <br>
-                                <small class="text-muted">${student.email}</small>
+                                <small class="text-muted">${escapeHtml(student.email)}</small>
                                 <br>
-                                <small class="text-success">Joined: ${student.joinDate || "N/A"}</small>
+                                <small class="text-success">Joined: ${escapeHtml(student.joinDate) || "N/A"}</small>
                             </div>
                         </div>
                         <div class="text-end">
@@ -197,10 +197,10 @@ function renderAssignments() {
                     <div class="assignment-item">
                         <div class="d-flex justify-content-between align-items-start">
                             <div class="flex-grow-1">
-                                <h6 class="mb-1">${assignment.title}</h6>
-                                <p class="mb-1 small">${assignment.description || "No description"}</p>
+                                <h6 class="mb-1">${escapeHtml(assignment.title)}</h6>
+                                <p class="mb-1 small">${escapeHtml(assignment.description) || "No description"}</p>
                                 <div class="mb-2">
-                                    <span class="badge bg-secondary">Due: ${assignment.dueDate}</span>
+                                    <span class="badge bg-secondary">Due: ${escapeHtml(assignment.dueDate)}</span>
                                     <span class="badge bg-info">Max Score: ${assignment.maxScore}</span>
                                 </div>
                                 <div class="progress mb-2" style="height: 5px;">
@@ -330,13 +330,13 @@ function loadRecentActivity() {
   activities.forEach((activity) => {
     html += `
                     <div class="timeline-item">
-                        <div class="timeline-date">${activity.date}</div>
+                        <div class="timeline-date">${escapeHtml(activity.date)}</div>
                         <div class="mb-1">
                             <i class="fas ${getActivityIcon(activity.type)}"></i>
-                            <strong>${activity.action}</strong>
+                            <strong>${escapeHtml(activity.action)}</strong>
                         </div>
-                        <div class="small text-muted">${activity.title}</div>
-                        <div class="small text-muted">by ${activity.user}</div>
+                        <div class="small text-muted">${escapeHtml(activity.title)}</div>
+                        <div class="small text-muted">by ${escapeHtml(activity.user)}</div>
                     </div>
                 `;
   });
@@ -468,7 +468,7 @@ function viewSubmissions(assignmentId) {
   const assignment = assignments.find((a) => a.id === assignmentId);
   const submissions = getAssignmentSubmissions(assignmentId);
 
-  let message = `Submissions for "${assignment.title}":\n\n`;
+  let message = `Submissions for "${escapeHtml(assignment.title)}":\n\n`;
   submissions.forEach((sub) => {
     const status = sub.submitted
       ? sub.graded
@@ -526,6 +526,14 @@ function saveStudentSubmissions(studentId, submissions) {
   );
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -540,22 +548,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load admin profile
 function loadAdminProfile() {
   if (currentUser) {
     $("#adminWelcome").html(
-      `<i class="fas fa-user-shield"></i> ${currentUser.name}`,
+      `<i class="fas fa-user-shield"></i> ${escapeHtml(currentUser.name)}`,
     );
   }
 }

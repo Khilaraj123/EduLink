@@ -521,11 +521,11 @@ function exportTopCourses() {
   let csv = "Rank,Course Name,Instructor,Units Sold,Revenue\n";
   $("#topProductsBody tr").each(function () {
     const row = $(this);
-    csv += row.find("td:eq(0)").text() + ",";
-    csv += '"' + row.find("td:eq(1)").text() + '",';
-    csv += '"' + row.find("td:eq(2)").text() + '",';
-    csv += row.find("td:eq(3)").text() + ",";
-    csv += row.find("td:eq(4)").text() + "\n";
+    csv += csvEscape(row.find("td:eq(0)").text()) + ",";
+    csv += '"' + csvEscape(row.find("td:eq(1)").text()) + '",';
+    csv += '"' + csvEscape(row.find("td:eq(2)").text()) + '",';
+    csv += csvEscape(row.find("td:eq(3)").text()) + ",";
+    csv += csvEscape(row.find("td:eq(4)").text()) + "\n";
   });
 
   downloadCSV(csv, "top_courses.csv");
@@ -535,7 +535,7 @@ function exportTopCourses() {
 function exportTransactions() {
   let csv = "Transaction ID,Date,Customer,Course,Amount,Status\n";
   filteredTransactions.forEach((t) => {
-    csv += `${t.id},${new Date(t.date).toLocaleDateString()},"${t.customer}","${t.courseTitle}",${t.amount},${t.status}\n`;
+    csv += `${csvEscape(t.id)},${new Date(t.date).toLocaleDateString()},"${csvEscape(t.customer)}","${csvEscape(t.courseTitle)}",${t.amount},${csvEscape(t.status)}\n`;
   });
 
   downloadCSV(csv, "transactions.csv");
@@ -546,6 +546,15 @@ function exportChart(chartName) {
   showToast("Info", "Chart export feature coming soon!", "info");
 }
 
+// CSV escape helper
+function csvEscape(value) {
+  const str = String(value);
+  if (/^[=+\-@]/.test(str)) {
+    return "'" + str;
+  }
+  return str;
+}
+
 // Download CSV
 function downloadCSV(csv, filename) {
   const blob = new Blob([csv], { type: "text/csv" });
@@ -554,6 +563,14 @@ function downloadCSV(csv, filename) {
   link.download = filename;
   link.click();
   showToast("Success", "CSV exported successfully!", "success");
+}
+
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
 }
 
 // Show toast notification
@@ -570,22 +587,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load admin profile
 function loadAdminProfile() {
   if (currentUser) {
     $("#adminWelcome").html(
-      `<i class="fas fa-user-shield"></i> ${currentUser.name}`,
+      `<i class="fas fa-user-shield"></i> ${escapeHtml(currentUser.name)}`,
     );
   }
 }

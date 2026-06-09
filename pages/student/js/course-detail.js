@@ -31,7 +31,7 @@ async function loadCourse() {
   }
 
   try {
-    const response = await fetch("../../assets/data/courses.json");
+    const response = await fetch("../../data/courses.json");
     const data = await response.json();
     currentCourse = data.courses.find((c) => c.id === courseId);
 
@@ -93,17 +93,17 @@ function renderCourse() {
                     <div class="container">
                         <div class="row">
                             <div class="col-md-8">
-                                <h1 class="display-5 fw-bold">${currentCourse.title}</h1>
-                                <p class="lead">${currentCourse.description}</p>
+                                <h1 class="display-5 fw-bold">${escapeHtml(currentCourse.title)}</h1>
+                                <p class="lead">${escapeHtml(currentCourse.description)}</p>
                                 <div class="mt-3">
                                     <span class="badge bg-light text-dark me-2">
-                                        <i class="fas fa-user"></i> ${currentCourse.instructorName}
+                                        <i class="fas fa-user"></i> ${escapeHtml(currentCourse.instructorName)}
                                     </span>
                                     <span class="badge bg-light text-dark me-2">
-                                        <i class="fas fa-clock"></i> ${currentCourse.duration}
+                                        <i class="fas fa-clock"></i> ${escapeHtml(currentCourse.duration)}
                                     </span>
                                     <span class="badge bg-light text-dark me-2">
-                                        <i class="fas fa-signal"></i> ${currentCourse.level}
+                                        <i class="fas fa-signal"></i> ${escapeHtml(currentCourse.level)}
                                     </span>
                                     <span class="badge bg-light text-dark">
                                         <i class="fas fa-users"></i> ${currentCourse.students} students
@@ -118,14 +118,14 @@ function renderCourse() {
                     <div class="row">
                         <div class="col-md-8">
                             <!-- Course Image -->
-                            <img src="${currentCourse.image}" class="course-image-large mb-4" alt="${currentCourse.title}">
+                            <img src="${escapeHtml(currentCourse.image)}" class="course-image-large mb-4" alt="${escapeHtml(currentCourse.title)}">
                             
                             <!-- What You'll Learn -->
                             <div class="card mb-4">
                                 <div class="card-body">
                                     <h4><i class="fas fa-graduation-cap"></i> What You'll Learn</h4>
                                     <ul class="feature-list">
-                                        <li><i class="fas fa-check-circle"></i> Master ${currentCourse.title} from scratch</li>
+                                        <li><i class="fas fa-check-circle"></i> Master ${escapeHtml(currentCourse.title)} from scratch</li>
                                         <li><i class="fas fa-check-circle"></i> Build real-world projects</li>
                                         <li><i class="fas fa-check-circle"></i> Get certified upon completion</li>
                                         <li><i class="fas fa-check-circle"></i> Access to community support</li>
@@ -169,7 +169,7 @@ function renderCourse() {
                                                             <span class="lesson-icon">
                                                                 <i class="fas ${isCompleted ? "fa-check-circle text-success" : isCurrent ? "fa-play-circle text-warning" : "fa-file-alt"}"></i>
                                                             </span>
-                                                            <strong>Lesson ${index + 1}:</strong> ${lesson}
+                                                            <strong>Lesson ${index + 1}:</strong> ${escapeHtml(lesson)}
                                                         </div>
                                                         ${isCompleted ? '<span class="badge bg-success">Completed</span>' : ""}
                                                     </div>
@@ -231,7 +231,7 @@ function renderCourse() {
                                         <hr>
                                         <h6>This course includes:</h6>
                                         <ul class="feature-list">
-                                            <li><i class="fas fa-video"></i> ${currentCourse.duration} of video content</li>
+                                            <li><i class="fas fa-video"></i> ${escapeHtml(currentCourse.duration)} of video content</li>
                                             <li><i class="fas fa-download"></i> Downloadable resources</li>
                                             <li><i class="fas fa-certificate"></i> Certificate of completion</li>
                                             <li><i class="fas fa-mobile-alt"></i> Mobile access</li>
@@ -296,11 +296,11 @@ function openLesson(index) {
                 <div class="video-placeholder" onclick="playVideo()">
                     <i class="fas fa-play-circle fa-4x mb-3"></i>
                     <h5>Click to play video lesson</h5>
-                    <p class="text-muted">${lesson} - Full video tutorial</p>
+                    <p class="text-muted">${escapeHtml(lesson)} - Full video tutorial</p>
                 </div>
                 <div class="mt-4">
                     <h6>Lesson Description</h6>
-                    <p>This lesson covers ${lesson}. You'll learn practical skills through hands-on examples and exercises.</p>
+                    <p>This lesson covers ${escapeHtml(lesson)}. You'll learn practical skills through hands-on examples and exercises.</p>
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Complete this lesson to track your progress
                     </div>
@@ -423,14 +423,14 @@ function loadReviews() {
                     <div class="review-item">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <strong>${review.userName}</strong>
+                                <strong>${escapeHtml(review.userName)}</strong>
                                 <div class="rating-stars">
                                     ${generateStarRating(review.rating)}
                                 </div>
                             </div>
-                            <small class="text-muted">${review.date}</small>
+                            <small class="text-muted">${escapeHtml(review.date)}</small>
                         </div>
-                        <p class="mt-2 mb-0">${review.comment}</p>
+                        <p class="mt-2 mb-0">${escapeHtml(review.comment)}</p>
                     </div>
                 `;
   });
@@ -442,7 +442,7 @@ function loadReviews() {
 function generateStarRating(rating) {
   let stars = "";
   for (let i = 1; i <= 5; i++) {
-    stars += `<i class="fas fa-star${i <= rating ? "" : "-o"}"></i>`;
+    stars += `<i class="${i <= rating ? "fas" : "far"} fa-star"></i>`;
   }
   return stars;
 }
@@ -537,6 +537,14 @@ function submitReview() {
   loadReviews();
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -551,15 +559,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Rating input handler

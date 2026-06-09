@@ -93,6 +93,10 @@ function updateStats(days) {
 
 // Update charts
 function updateCharts(days) {
+  if (userGrowthChart) userGrowthChart.destroy();
+  if (revenueChart) revenueChart.destroy();
+  if (coursePopularityChart) coursePopularityChart.destroy();
+  if (salesTrendChart) salesTrendChart.destroy();
   // User Growth Chart
   const userGrowthData = generateTimeSeriesData(days, allUsers.length);
   if (userGrowthChart) userGrowthChart.destroy();
@@ -267,8 +271,8 @@ function updateTopCourses() {
     html += `
                     <tr>
                         <td><span class="badge bg-${index < 3 ? "warning" : "secondary"}">${index + 1}</span></td>
-                        <td>${course.title}</td>
-                        <td>${course.instructorName}</td>
+                        <td>${escapeHtml(course.title)}</td>
+                        <td>${escapeHtml(course.instructorName)}</td>
                         <td>${course.students.toLocaleString()}</td>
                         <td>$${revenue.toLocaleString()}</td>
                         <td>
@@ -353,6 +357,15 @@ function exportChart(chartId) {
   }
 }
 
+// CSV escape helper
+function csvEscape(value) {
+  const str = String(value);
+  if (/^[=+\-@]/.test(str)) {
+    return "'" + str;
+  }
+  return str;
+}
+
 // Export table to CSV
 function exportTableToCSV(tableId) {
   let csv = [];
@@ -362,7 +375,7 @@ function exportTableToCSV(tableId) {
       const row = [],
         cols = rows[i].querySelectorAll("td, th");
       for (let j = 0; j < cols.length; j++) {
-        row.push(cols[j].innerText);
+        row.push(csvEscape(cols[j].innerText));
       }
       csv.push(row.join(","));
     }
@@ -385,6 +398,14 @@ function scrollToSection(sectionId) {
   }
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -399,15 +420,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load admin profile
@@ -426,9 +446,19 @@ function logout() {
 }
 
 // Refresh data every 30 seconds
-setInterval(() => {
+let refreshInterval = setInterval(() => {
   updateAnalytics();
 }, 30000);
+
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) {
+    clearInterval(refreshInterval);
+  } else {
+    refreshInterval = setInterval(() => {
+      updateAnalytics();
+    }, 30000);
+  }
+});
 
 // Event listeners
 $(document).ready(function () {

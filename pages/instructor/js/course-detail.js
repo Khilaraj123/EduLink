@@ -34,7 +34,7 @@ async function loadCourseData() {
 
   try {
     // Load courses
-    const coursesResponse = await fetch("../../assets/data/courses.json");
+    const coursesResponse = await fetch("../../data/courses.json");
     const coursesData = await coursesResponse.json();
     currentCourse = coursesData.courses.find(
       (c) => c.id === courseId && c.instructorId === currentUser.id,
@@ -51,7 +51,7 @@ async function loadCourseData() {
     }
 
     // Load users for student info
-    const usersResponse = await fetch("../../assets/data/users.json");
+    const usersResponse = await fetch("../../data/users.json");
     const usersData = await usersResponse.json();
 
     // Simulate enrolled students
@@ -185,16 +185,16 @@ function renderStudents() {
 
   let html = "";
   enrolledStudents.forEach((student) => {
-    const progress = Math.floor(Math.random() * 100);
+    const progress = 0;
     html += `
                     <div class="student-item">
                         <div class="d-flex align-items-center">
-                            <img src="${student.avatar || "https://randomuser.me/api/portraits/men/1.jpg"}" 
-                                 class="student-avatar" alt="${student.name}">
+                            <img src="${escapeHtml(student.avatar) || "https://randomuser.me/api/portraits/men/1.jpg"}" 
+                                 class="student-avatar" alt="${escapeHtml(student.name)}">
                             <div>
-                                <strong>${student.name}</strong>
+                                <strong>${escapeHtml(student.name)}</strong>
                                 <br>
-                                <small class="text-muted">${student.email}</small>
+                                <small class="text-muted">${escapeHtml(student.email)}</small>
                                 <div class="progress mt-1" style="width: 100px;">
                                     <div class="progress-bar bg-success" style="width: ${progress}%"></div>
                                 </div>
@@ -230,14 +230,14 @@ function renderReviews() {
                     <div class="review-item">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <strong>${review.userName}</strong>
+                                <strong>${escapeHtml(review.userName)}</strong>
                                 <div class="rating-stars">
                                     ${generateStarRating(review.rating)}
                                 </div>
                             </div>
-                            <small class="text-muted">${review.date}</small>
+                            <small class="text-muted">${escapeHtml(review.date)}</small>
                         </div>
-                        <p class="mt-2 mb-0">${review.comment}</p>
+                        <p class="mt-2 mb-0">${escapeHtml(review.comment)}</p>
                     </div>
                 `;
   });
@@ -420,21 +420,21 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load instructor profile
 function loadInstructorProfile() {
   if (currentUser) {
     $("#instructorWelcome").html(
-      `<i class="fas fa-chalkboard-teacher"></i> ${currentUser.name}`,
+      `<i class="fas fa-chalkboard-teacher"></i> ${escapeHtml(currentUser.name)}`,
     );
   }
 }

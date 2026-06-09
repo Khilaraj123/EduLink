@@ -110,6 +110,8 @@ function animateNumber(elementId, targetValue) {
 
 // Initialize charts
 function initializeCharts() {
+  if (userGrowthChart) userGrowthChart.destroy();
+  if (revenueChart) revenueChart.destroy();
   // User Growth Chart
   const userGrowthData = generateUserGrowthData();
   userGrowthChart = new Chart(document.getElementById("userGrowthChart"), {
@@ -259,12 +261,12 @@ function loadRecentCourses() {
   recentCourses.forEach((course) => {
     html += `
                     <div class="recent-course-item" onclick="window.location.href='course-detail.html?id=${course.id}'">
-                        <img src="${course.image}" class="course-thumb" alt="${course.title}">
+                        <img src="${escapeHtml(course.image)}" class="course-thumb" alt="${escapeHtml(course.title)}">
                         <div class="flex-grow-1">
-                            <strong>${course.title}</strong>
+                            <strong>${escapeHtml(course.title)}</strong>
                             <br>
                             <small class="text-muted">
-                                <i class="fas fa-user"></i> ${course.instructorName} | 
+                                <i class="fas fa-user"></i> ${escapeHtml(course.instructorName)} | 
                                 <i class="fas fa-users"></i> ${course.students} students | 
                                 <i class="fas fa-dollar-sign"></i> ${course.price}
                             </small>
@@ -307,6 +309,14 @@ function generateReport() {
   showToast("Success", "Report generated and downloaded!", "success");
 }
 
+// Escape HTML
+function escapeHtml(text) {
+  if (!text) return "";
+  const div = document.createElement("div");
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 // Show toast notification
 function showToast(title, message, type = "success") {
   const toastHtml = `
@@ -321,15 +331,14 @@ function showToast(title, message, type = "success") {
                 </div>
             `;
 
-  $(".toast-container").append(toastHtml);
-  const toast = new bootstrap.Toast($(".toast").last()[0]);
+  const $toastContainer = $(".toast-container");
+  $toastContainer.append(toastHtml);
+  const $toastEl = $toastContainer.children(".toast").last();
+  const toast = new bootstrap.Toast($toastEl[0]);
   toast.show();
-
-  $(".toast")
-    .last()[0]
-    .addEventListener("hidden.bs.toast", function () {
-      this.remove();
-    });
+  $toastEl[0].addEventListener("hidden.bs.toast", function () {
+    this.remove();
+  });
 }
 
 // Load admin profile
@@ -340,9 +349,19 @@ function loadAdminProfile() {
 }
 
 // Auto-refresh data every 30 seconds
-setInterval(() => {
+let refreshInterval = setInterval(() => {
   loadDashboardData();
 }, 30000);
+
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) {
+    clearInterval(refreshInterval);
+  } else {
+    refreshInterval = setInterval(() => {
+      loadDashboardData();
+    }, 30000);
+  }
+});
 
 // Logout
 function logout() {
